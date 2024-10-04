@@ -3,7 +3,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { InstagramLogo, InstagramMobileLogo } from "../../Assets/Contents";
 
 import { BiLogOut } from "react-icons/bi";
-import useLogout from "../../hooks/useLogout";
+import useLogout from "../../hooks/useLogOut";
 import SidebarItems from "./SidebarItems";
 
 const Sidebar = () => {
