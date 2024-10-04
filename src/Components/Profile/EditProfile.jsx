@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import useAuthStore from "../../store/authStore";
-import usePreviewImg from "../../hooks/usePreviewImg";
+import usePreviewImg from "../../hooks/usePreviewImage";
 import useEditProfile from "../../hooks/useEditProfile";
 import useShowToast from "../../hooks/useShowToast";
 
