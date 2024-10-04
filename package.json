@@ -2,7 +2,7 @@
   "name": "instagramclone",
   "private": true,
   "version": "0.0.1",
-  "homepage": "https://HannaFrangi.github.io/InstagramClone/",
+  "homepage": "https://HannaFrangi.github.io",
   "type": "module",
   "scripts": {
     "dev": "vite",
