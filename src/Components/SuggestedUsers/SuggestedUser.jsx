@@ -30,7 +30,7 @@ const SuggestedUser = ({ user, setUser }) => {
             </Box>
           </Link>
           <Box fontSize={11} color={"gray.500"}>
-            {user.followers.length} followers
+            {user.Followers.length} followers
           </Box>
         </VStack>
       </Flex>
