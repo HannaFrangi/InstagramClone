@@ -16,7 +16,7 @@ import {
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { CreatePostLogo } from "../../assets/Contents";
+import { CreatePostLogo } from "../../Assets/Contents";
 import { BsFillImageFill } from "react-icons/bs";
 import { useRef, useState } from "react";
 import usePreviewImg from "../../hooks/usePreviewImg";

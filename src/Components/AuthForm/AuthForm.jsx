@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import Signup from "./Signup";
 import Login from "./Login";
 import GoogleAuth from "./GoogleAuth";
-import { auth } from "../../firebase/firebaseConfig";
-import { useSignInWithGoogle } from "react-firebase-hooks/auth";
-import useShowToast from "../../Hooks/useShowToast";
-import useAuthStore from "../../store/authStore";
+// import { auth } from "../../firebase/firebaseConfig";
+// import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+// import useShowToast from "../../hooks/useShowToast";
+// import useAuthStore from "../../store/authStore";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
