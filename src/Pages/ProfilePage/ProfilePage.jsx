@@ -8,7 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import ProfileHeader from "../../Components/Profile/ProfileHeader";
-import ProfileTabs from "../../components/Profile/ProfileTabs";
+import ProfileTabs from "../../Components/Profile/ProfileTabs";
 import ProfilePosts from "../../Components/Profile/ProfilePosts";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
 import { useParams } from "react-router-dom";
