@@ -13,7 +13,7 @@ import {
   CommentLogo,
   NotificationsLogo,
   UnlikeLogo,
-} from "../../assets/Contents";
+} from "../../Assets/Contents";
 import usePostComment from "../../hooks/usePostComment";
 import useAuthStore from "../../store/authStore";
 import useLikePost from "../../hooks/useLikePost";

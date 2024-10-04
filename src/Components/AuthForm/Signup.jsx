@@ -8,7 +8,7 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import useSignUpWithEmailNPass from "../../Hooks/useSignUpWithEmailNPass";
+import useSignUpWithEmailNPass from "../../hooks/useSignUpWithEmailNPass";
 
 const Signup = () => {
   const [inputs, setInputs] = useState({
