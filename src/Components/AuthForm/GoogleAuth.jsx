@@ -1,7 +1,7 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
-import { auth, firestore } from "../../Firebase/Firebase";
+import { auth, firestore } from "../../firebase/firebaseConfig";
 import useShowToast from "../../Hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
 import { doc, getDoc, setDoc } from "firebase/firestore";

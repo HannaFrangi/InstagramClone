@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
-import { firestore } from "../firebase/firebase";
+import { firestore } from "../firebase/firebaseConfig";
 import { useEffect, useState } from "react";
 
 const useGetSuggestedUsers = () => {

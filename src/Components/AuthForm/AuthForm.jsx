@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Signup from "./Signup";
 import Login from "./Login";
 import GoogleAuth from "./GoogleAuth";
-import { auth } from "../../Firebase/Firebase";
+import { auth } from "../../firebase/firebaseConfig";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import useShowToast from "../../Hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
