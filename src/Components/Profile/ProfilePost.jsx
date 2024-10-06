@@ -107,7 +107,7 @@ const ProfilePost = ({ post }) => {
 
         <Image
           src={post.imageURL}
-          alt='profile post'
+          alt={`${userProfile.username}'s Post`}
           w={"100%"}
           h={"100%"}
           objectFit={"cover"}

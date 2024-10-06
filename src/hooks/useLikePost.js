@@ -2,7 +2,7 @@ import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
 import { firestore } from "../firebase/firebaseConfig";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const useLikePost = (post) => {
   const [isupdtating, setIsUpdtating] = useState(false);
@@ -10,6 +10,12 @@ const useLikePost = (post) => {
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(authUser?.id));
   const showToast = useShowToast();
+
+  useEffect(() => {
+    if (authUser && post.likes.includes(authUser.uid)) {
+      setIsLiked(true);
+    }
+  }, [authUser, post.likes]);
 
   const handleLikePost = async () => {
     if (isupdtating) return;

@@ -25,13 +25,14 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
   const [comment, setComment] = useState("");
   const authUser = useAuthStore((state) => state.user);
   const commentRef = useRef(null);
-  const { handleLikePost, isLiked, likes } = useLikePost(post);
+  const { handleLikePost, isLiked, likes } = useLikePost(post, authUser);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleSubmitComment = async () => {
     await handlePostComment(post.id, comment);
     setComment("");
   };
+
   return (
     <Box mb={10} marginTop={"auto"}>
       <Flex alignItems={"center"} gap={4} w={"full"} pt={0} mb={2} mt={4}>
