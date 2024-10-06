@@ -19,6 +19,27 @@ const useSignUpWithEmailNPass = () => {
   const showToast = useShowToast();
   const loginUser = useAuthStore((state) => state.login);
 
+  const isExistingEmail = async (email) => {
+    const userRef = collection(firestore, "users");
+    const q = query(userRef, where("email", "==", email.toLowerCase()));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  };
+
+  const isValidUsername = (username) => {
+    if (username.length < 1 || username.length > 30) {
+      return false;
+    }
+
+    const regex = /^(?!.*\.\.)(?!.*\.$)[a-zA-Z0-9._]+$/;
+
+    if (!regex.test(username)) {
+      return false;
+    }
+
+    return true;
+  };
+
   const signup = async (inputs) => {
     if (
       !inputs.email ||
@@ -45,9 +66,26 @@ const useSignUpWithEmailNPass = () => {
       return;
     }
 
+    if (!isValidUsername(inputs.username)) {
+      showToast(
+        "Error",
+        "Username must be 1-30 characters long and can only contain letters, numbers, periods, and underscores.",
+        "error"
+      );
+      return;
+    }
+
     setLoading(true);
     try {
-      // Check The Username
+      if (await isExistingEmail(inputs.email)) {
+        showToast(
+          "Error",
+          "Email already exists. Please use a different email.",
+          "error"
+        );
+        return;
+      }
+
       const userRef = collection(firestore, "users");
       const q = query(
         userRef,
@@ -58,7 +96,7 @@ const useSignUpWithEmailNPass = () => {
         showToast("Oops", "Username Already Exists", "error");
         return;
       }
-      // Continue to sign the user in
+
       const newUser = await createUserWithEmailAndPassword(
         inputs.email,
         inputs.password
@@ -91,7 +129,7 @@ const useSignUpWithEmailNPass = () => {
       console.log("Signup error:", error);
       showToast("Error", error.message, "error");
     } finally {
-      setLoading(false); // Stop loading after everything is done
+      setLoading(false);
     }
   };
 

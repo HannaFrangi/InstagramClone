@@ -14,6 +14,7 @@ const useLogout = () => {
       localStorage.removeItem("user-info");
       logoutUser();
     } catch (error) {
+      console.error("Logout error:", error);
       showToast("Error", error.message, "error");
     }
   };

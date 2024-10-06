@@ -4,6 +4,7 @@ import FeedPosts from "../../Components/FeedPosts/FeedPosts";
 import SuggestedUsers from "../../Components/SuggestedUsers/SuggestedUsers";
 
 const HomePage = () => {
+  document.title = "Home🌟";
   return (
     <Container maxW={"container.lg"}>
       <Flex gap={20}>

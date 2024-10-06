@@ -1,10 +1,13 @@
 import {
+  Box,
+  Button,
   Container,
   Flex,
   Link,
   Skeleton,
   SkeletonCircle,
   Text,
+  useBreakpointValue,
   VStack,
 } from "@chakra-ui/react";
 import ProfileHeader from "../../Components/Profile/ProfileHeader";
@@ -13,19 +16,27 @@ import ProfilePosts from "../../Components/Profile/ProfilePosts";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
 import { useParams, useNavigate, Link as RouterLink } from "react-router-dom";
 import { useEffect } from "react";
+import { BiConfused } from "react-icons/bi";
 
 const ProfilePage = () => {
   const { username } = useParams();
   const navigate = useNavigate();
   const { isLoading, userProfile } = useGetUserProfileByUsername(username);
 
-  // Redirect to lowercase username if the current one has uppercase letters
   useEffect(() => {
     const lowerCaseUsername = username.toLowerCase();
     if (username !== lowerCaseUsername) {
       navigate(`/${lowerCaseUsername}`, { replace: true });
     }
   }, [username, navigate]);
+
+  useEffect(() => {
+    if (userProfile) {
+      document.title = `${userProfile.username}'s Profile🔥`;
+    } else {
+      document.title = "User Not Found";
+    }
+  }, [userProfile]);
 
   const userNotFound = !isLoading && !userProfile;
   if (userNotFound) return <UserNotFound />;
@@ -87,7 +98,10 @@ const ProfileHeaderSkeleton = () => {
 };
 
 // Component for user not found case
+
 const UserNotFound = () => {
+  const buttonSize = useBreakpointValue({ base: "md", md: "lg" });
+
   return (
     <Flex
       flexDir='column'
@@ -96,21 +110,41 @@ const UserNotFound = () => {
       h='100vh'
       textAlign='center'
       mx='auto'
+      bg='black'
+      p={4}
+      borderRadius='md'
+      boxShadow='lg'
+      transition='0.3s ease'
     >
-      <Text fontSize='2xl' mb={4}>
-        User Not Found
-      </Text>
-      <Link
-        as={RouterLink}
-        to='/'
-        color='blue.500'
-        w='max-content'
-        mx='auto'
-        fontWeight='bold'
-        fontSize='lg'
-      >
-        Go home
-      </Link>
+      <Box p={6} bg='black' borderRadius='md' boxShadow='xl' maxW='400px'>
+        <Flex direction='column' align='center'>
+          <BiConfused size={64} color='white' />
+          <Text fontSize='4xl' fontWeight='bold' mb={4} color='white'>
+            User Not Found
+          </Text>
+          <Text mb={6} color='gray.300'>
+            The user you are looking for does not exist. It might have been
+            deleted or never existed.
+          </Text>
+          <Link
+            as={RouterLink}
+            to='/'
+            w='max-content'
+            mx='auto'
+            fontWeight='bold'
+            fontSize='lg'
+          >
+            <Button
+              colorScheme='teal'
+              size={buttonSize}
+              _hover={{ bg: "teal.600", transform: "translateY(-2px)" }}
+              transition='0.3s ease'
+            >
+              Go Home
+            </Button>
+          </Link>
+        </Flex>
+      </Box>
     </Flex>
   );
 };
