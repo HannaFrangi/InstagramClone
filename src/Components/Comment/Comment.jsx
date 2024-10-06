@@ -9,7 +9,7 @@ const Comment = ({ comment }) => {
   if (isLoading) return <CommentSkeleton />;
   return (
     <Flex gap={4} key={comment.id}>
-      <Link to={`/${userProfile.username}`}>
+      <Link to={`/${userProfile.username.toLowerCase()}`}>
         <Avatar src={userProfile.profilePicURL} size={"sm"} />
       </Link>
       <Flex direction={"column"}>

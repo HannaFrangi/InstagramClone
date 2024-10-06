@@ -14,11 +14,11 @@ const AuthPage = () => {
           {/* Right Section */}
           <VStack spacing={4} align='stretch'>
             <AuthForm />
-            <Box textAlign={"center"}>Get the App</Box>
+            {/* <Box textAlign={"center"}>Get the App</Box>
             <Flex gap={5} justifyContent={"center"}>
               <Image src='/playstore.png' h={10} alt='PlayStore' />
               <Image src='/microsoft.png' h={10} alt='Microsoft' />
-            </Flex>
+            </Flex> */}
           </VStack>
         </Flex>
       </Container>

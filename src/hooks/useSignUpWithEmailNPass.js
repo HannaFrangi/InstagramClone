@@ -49,7 +49,10 @@ const useSignUpWithEmailNPass = () => {
     try {
       // Check The Username
       const userRef = collection(firestore, "users");
-      const q = query(userRef, where("username", "==", inputs.username));
+      const q = query(
+        userRef,
+        where("username", "==", inputs.username.toLowerCase())
+      );
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
         showToast("Oops", "Username Already Exists", "error");
@@ -70,7 +73,7 @@ const useSignUpWithEmailNPass = () => {
       const userDoc = {
         uid: newUser.user.uid,
         email: inputs.email,
-        username: inputs.username,
+        username: inputs.username.toLowerCase(),
         fullName: inputs.fullName,
         bio: "",
         profilePicURL: "",
