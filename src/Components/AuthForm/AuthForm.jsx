@@ -1,23 +1,39 @@
-import { Box, Image, Text, VStack, Flex, useToast } from "@chakra-ui/react";
+import { Box, Image, Text, VStack, Flex } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Signup from "./Signup";
 import Login from "./Login";
 import GoogleAuth from "./GoogleAuth";
-// import { auth } from "../../firebase/firebaseConfig";
-// import { useSignInWithGoogle } from "react-firebase-hooks/auth";
-// import useShowToast from "../../hooks/useShowToast";
-// import useAuthStore from "../../store/authStore";
+import ForgotPassword from "./ForgotPassword";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false); // New state for forgot password
 
   return (
     <>
       <Box border={"1px solid gray"} borderRadius={4} padding={5}>
         <VStack spacing={4}>
           <Image src='/logo.png' h={24} cursor={"pointer"} alt='instagram' />
-          {isLogin ? <Login /> : <Signup />}
 
+          {isForgotPassword ? (
+            <ForgotPassword onClose={() => setIsForgotPassword(false)} />
+          ) : isLogin ? (
+            <Login />
+          ) : (
+            <Signup />
+          )}
+          {/* Add Forgot Password link */}
+          {isLogin && (
+            <Box
+              onClick={() => setIsForgotPassword(true)}
+              color={"blue.500"}
+              cursor={"pointer"}
+              fontSize={14}
+              textAlign='center'
+            >
+              Forgot Password?
+            </Box>
+          )}
           {/* ------------OR------------- */}
           <Flex
             alignItems={"center"}
@@ -35,6 +51,7 @@ const AuthForm = () => {
           <GoogleAuth prefix={isLogin ? "Log in " : "Sign Up "} />
         </VStack>
       </Box>
+
       {/* More shiii */}
       <Box border={"1px solid gray"} borderRadius={4} padding={5}>
         <Flex alignItems={"center"} justifyContent={"center"}>

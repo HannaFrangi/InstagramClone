@@ -5,9 +5,15 @@ import PageLayout from "./Layout/PageLayout/PageLayout";
 import ProfilePage from "./Pages/ProfilePage/ProfilePage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebaseConfig";
+import ResetPassword from "./Pages/ResetPassword/ResetPassword";
 
 function App() {
-  const [authUser] = useAuthState(auth);
+  const [authUser, loading] = useAuthState(auth);
+
+  // If still loading user authentication state, you can show a loader or placeholder.
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <PageLayout>
@@ -20,7 +26,11 @@ function App() {
           path='/auth'
           element={!authUser ? <AuthPage /> : <Navigate to='/' />}
         />
-        <Route path='/:username' element={<ProfilePage />} />
+        <Route path='/reset-password/' element={<ResetPassword />} />
+        <Route
+          path='/:username'
+          element={authUser ? <ProfilePage /> : <Navigate to='/auth' />}
+        />
       </Routes>
     </PageLayout>
   );

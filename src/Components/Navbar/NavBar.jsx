@@ -1,7 +1,8 @@
 import { Button, Container, Flex, Image } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
     <Container maxW={"container.lg"} my={4}>
       <Flex
@@ -14,6 +15,7 @@ const Navbar = () => {
           h={20}
           display={{ base: "none", sm: "block" }}
           cursor={"pointer"}
+          onClick={() => navigate("/")}
         />
         <Flex gap={4}>
           <Link to='/auth'>
