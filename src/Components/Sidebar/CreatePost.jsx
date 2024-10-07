@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { CreatePostLogo } from "../../Assets/Contents";
 import { BsFillImageFill } from "react-icons/bs";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import usePreviewImg from "../../hooks/usePreviewImage";
 import useShowToast from "../../hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
@@ -34,6 +34,7 @@ import {
 } from "firebase/firestore";
 import { firestore, storage } from "../../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
 
 const CreatePost = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -142,13 +143,20 @@ const CreatePost = () => {
 export default CreatePost;
 
 function useCreatePost() {
+  const authUser = useAuthStore((state) => state.user);
   const showToast = useShowToast();
   const [isLoading, setIsLoading] = useState(false);
-  const authUser = useAuthStore((state) => state.user);
   const createPost = usePostStore((state) => state.createPost);
   const addPost = useUserProfileStore((state) => state.addPost);
-  const userProfile = useUserProfileStore((state) => state.userProfile);
   const { pathname } = useLocation();
+  const { userProfile } = useGetUserProfileByUsername(authUser.username);
+  useEffect(() => {
+    if (!userProfile) {
+      console.log("Waiting for user profile to load...");
+    } else {
+      console.log("User profile loaded:", userProfile);
+    }
+  }, [userProfile]);
 
   const handleCreatePost = async (selectedFile, caption) => {
     if (isLoading) return;
@@ -175,14 +183,20 @@ function useCreatePost() {
 
       newPost.imageURL = downloadURL;
 
-      if (userProfile.uid === authUser.uid)
+      if (userProfile.uid === authUser.uid) {
         createPost({ ...newPost, id: postDocRef.id });
+        console.log("Post created successfully for user:", userProfile.uid);
+      } else {
+        console.error("User profile uid does not match.");
+      }
 
-      if (pathname !== "/" && userProfile.uid === authUser.uid)
+      if (pathname !== "/" && userProfile.uid === authUser.uid) {
         addPost({ ...newPost, id: postDocRef.id });
+      }
 
       showToast("Success", "Post created successfully", "success");
     } catch (error) {
+      console.log(error);
       showToast("Error", error.message, "error");
     } finally {
       setIsLoading(false);

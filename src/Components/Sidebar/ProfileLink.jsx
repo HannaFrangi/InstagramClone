@@ -1,4 +1,4 @@
-import { Avatar, Box, Link, Tooltip } from "@chakra-ui/react";
+import { Avatar, Box, Link, Tooltip, Skeleton } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import useAuthStore from "../../store/authStore";
 
@@ -16,7 +16,7 @@ const ProfileLink = () => {
     >
       <Link
         display={"flex"}
-        to={`/${authUser?.username}`}
+        to={authUser ? `/${authUser.username}` : "#"}
         as={RouterLink}
         alignItems={"center"}
         gap={4}
@@ -26,10 +26,23 @@ const ProfileLink = () => {
         w={{ base: 10, md: "full" }}
         justifyContent={{ base: "center", md: "flex-start" }}
       >
-        <Avatar size={"sm"} src={authUser?.profilePicURL || ""} />
-        <Box display={{ base: "none", md: "block" }}>
-          {`${authUser?.username}`}
-        </Box>
+        {authUser ? (
+          <>
+            <Avatar size={"sm"} src={authUser.profilePicURL || ""} />
+            <Box display={{ base: "none", md: "block" }}>
+              {authUser.username}
+            </Box>
+          </>
+        ) : (
+          <>
+            <Skeleton circle size='40px' />
+            <Skeleton
+              height='20px'
+              width='100px'
+              display={{ base: "none", md: "block" }}
+            />
+          </>
+        )}
       </Link>
     </Tooltip>
   );
