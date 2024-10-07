@@ -4,10 +4,11 @@ import Signup from "./Signup";
 import Login from "./Login";
 import GoogleAuth from "./GoogleAuth";
 import ForgotPassword from "./ForgotPassword";
+import { FaS } from "react-icons/fa6";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [isForgotPassword, setIsForgotPassword] = useState(false); // New state for forgot password
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   return (
     <>
@@ -22,16 +23,31 @@ const AuthForm = () => {
           ) : (
             <Signup />
           )}
-          {/* Add Forgot Password link */}
-          {isLogin && (
+          {isLogin ? (
             <Box
-              onClick={() => setIsForgotPassword(true)}
+              onClick={() => {
+                setIsForgotPassword(true);
+                setIsLogin(false);
+              }}
               color={"blue.500"}
               cursor={"pointer"}
               fontSize={14}
               textAlign='center'
             >
               Forgot Password?
+            </Box>
+          ) : (
+            <Box
+              onClick={() => {
+                setIsForgotPassword(false);
+                setIsLogin(true);
+              }}
+              color={"blue.500"}
+              cursor={"pointer"}
+              fontSize={14}
+              textAlign='center'
+            >
+              Go back
             </Box>
           )}
           {/* ------------OR------------- */}

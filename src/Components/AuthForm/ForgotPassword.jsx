@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Button, Input, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { auth } from "../../firebase/firebaseConfig";
 import { sendPasswordResetEmail } from "firebase/auth";
@@ -23,12 +15,9 @@ const ForgotPassword = ({ onClose }) => {
 
     try {
       const actionCodeSettings = {
-        // Redirect URL after the user resets their password
         url: `https://igclonefrangi.vercel.app/reset-password`,
-        handleCodeInApp: true, // Ensure it's handled within your app
+        handleCodeInApp: true,
       };
-
-      // Firebase method to send a password reset email
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
 
       showToast(
@@ -36,11 +25,8 @@ const ForgotPassword = ({ onClose }) => {
         "Password reset email sent! Please check your inbox.",
         "success"
       );
-
-      // Optionally close modal or navigate after email is sent
       if (onClose) onClose();
     } catch (error) {
-      // Handle potential errors, e.g., invalid email, network issues, etc.
       if (error.code === "auth/user-not-found") {
         showToast("Error", "No user found with this email address.", "error");
       } else {
@@ -54,21 +40,15 @@ const ForgotPassword = ({ onClose }) => {
   return (
     <Box>
       <VStack spacing={4}>
-        <Text fontSize='lg' fontWeight='bold'>
-          Reset Your Password
-        </Text>
-        <FormControl>
-          <FormLabel>Email:</FormLabel>
-          <Input
-            placeholder='Enter your email'
-            fontSize={14}
-            type='email'
-            size={"sm"}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </FormControl>
+        <Input
+          placeholder='Enter your email'
+          fontSize={14}
+          type='email'
+          size={"sm"}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
         <Button
           w={"full"}
           colorScheme='blue'

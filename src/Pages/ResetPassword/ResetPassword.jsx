@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -16,7 +16,9 @@ import { verifyPasswordResetCode, confirmPasswordReset } from "firebase/auth";
 import useShowToast from "../../hooks/useShowToast";
 
 const ResetPassword = () => {
-  const { oobCode } = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const oobCode = queryParams.get("oobCode");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const showToast = useShowToast();
@@ -25,17 +27,13 @@ const ResetPassword = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      // Verify the oobCode
       await verifyPasswordResetCode(auth, oobCode);
-
-      // Confirm the password reset
       await confirmPasswordReset(auth, oobCode, newPassword);
       showToast("Success", "Password has been reset successfully!", "success");
       navigate("/");
     } catch (error) {
-      console.log(error);
+      console.error("Error resetting password:", error);
       showToast("Error", error.message, "error");
     } finally {
       setLoading(false);
@@ -46,7 +44,7 @@ const ResetPassword = () => {
     <Flex
       align='center'
       justify='center'
-      h='100vh'
+      h='50vh'
       // bgGradient='linear(to-r, blue.500, purple.500)'
       p={4}
     >

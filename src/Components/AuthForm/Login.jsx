@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, Input } from "@chakra-ui/react";
+import { Alert, AlertIcon, Button, Input, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import useLogin from "../../hooks/useLogin";
 
@@ -10,6 +10,7 @@ const Login = () => {
   const { loading, error, login } = useLogin();
   return (
     <>
+      <Text fontSize='lg' fontWeight='bold'></Text>
       <Input
         placeholder='Email'
         fontSize={14}
