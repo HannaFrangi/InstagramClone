@@ -14,7 +14,12 @@ import ProfileHeader from "../../Components/Profile/ProfileHeader";
 import ProfileTabs from "../../Components/Profile/ProfileTabs";
 import ProfilePosts from "../../Components/Profile/ProfilePosts";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
-import { useParams, useNavigate, Link as RouterLink } from "react-router-dom";
+import {
+  useParams,
+  useNavigate,
+  Link as RouterLink,
+  useLocation,
+} from "react-router-dom";
 import { useEffect } from "react";
 import { BiConfused } from "react-icons/bi";
 
@@ -22,6 +27,9 @@ const ProfilePage = () => {
   const { username } = useParams();
   const navigate = useNavigate();
   const { isLoading, userProfile } = useGetUserProfileByUsername(username);
+  const pathname = useLocation();
+
+  if (pathname == "/auth") return;
 
   useEffect(() => {
     const lowerCaseUsername = username.toLowerCase();

@@ -1,13 +1,43 @@
-import { Box, Button, Flex, Link, Tooltip } from "@chakra-ui/react";
+import { Box, Button, Flex, Link, Tooltip, Spinner } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { InstagramLogo, InstagramMobileLogo } from "../../Assets/Contents";
-
 import { BiLogOut } from "react-icons/bi";
 import useLogout from "../../hooks/useLogOut";
 import SidebarItems from "./SidebarItems";
+import { useEffect, useState } from "react";
 
 const Sidebar = () => {
   const { handleLogout, isLoggingOut } = useLogout();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <Box
+        height={"100vh"}
+        borderRight={"1px solid"}
+        borderColor={"whiteAlpha.300"}
+        py={8}
+        position={"sticky"}
+        top={0}
+        left={0}
+        px={{ base: 2, md: 4 }}
+        display='flex'
+        alignItems='center'
+        justifyContent='center'
+      >
+        <Spinner color='white' />
+      </Box>
+    );
+  }
+
   return (
     <Box
       height={"100vh"}

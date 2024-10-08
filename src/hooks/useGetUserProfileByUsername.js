@@ -10,6 +10,12 @@ const useGetUserProfileByUsername = (username) => {
   const { userProfile, setUserProfile } = useUserProfileStore();
 
   useEffect(() => {
+    if (!username) {
+      setUserProfile(null);
+      setIsLoading(false);
+      return;
+    }
+
     const getUserProfile = async () => {
       setIsLoading(true);
       try {
@@ -19,7 +25,10 @@ const useGetUserProfileByUsername = (username) => {
         );
         const querySnapshot = await getDocs(q);
 
-        if (querySnapshot.empty) return setUserProfile(null);
+        if (querySnapshot.empty) {
+          setUserProfile(null);
+          return;
+        }
 
         let userDoc;
         querySnapshot.forEach((doc) => {
@@ -27,7 +36,6 @@ const useGetUserProfileByUsername = (username) => {
         });
 
         setUserProfile(userDoc);
-        // console.log(userDoc);
       } catch (error) {
         console.error(error);
         showToast("Error", error.message, "error");

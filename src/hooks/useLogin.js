@@ -28,6 +28,7 @@ const useLogin = () => {
         showToast("Success", "Logged in!", "success");
       }
     } catch (error) {
+      console.error(error.message);
       return showToast("Error", error.message, "error");
     }
   };

@@ -43,7 +43,6 @@ const CreatePost = () => {
   const { handleImageChange, selectedFile, setSelectedFile } = usePreviewImg();
   const showToast = useShowToast();
   const { isLoading, handleCreatePost } = useCreatePost();
-
   const handlePostCreation = async () => {
     try {
       await handleCreatePost(selectedFile, caption);
@@ -82,7 +81,6 @@ const CreatePost = () => {
 
       <Modal isOpen={isOpen} onClose={onClose} size='xl'>
         <ModalOverlay />
-
         <ModalContent bg={"black"} border={"1px solid gray"}>
           <ModalHeader>Create Post</ModalHeader>
           <ModalCloseButton />
@@ -143,13 +141,15 @@ const CreatePost = () => {
 export default CreatePost;
 
 function useCreatePost() {
+  const pathname = useLocation();
+  if (pathname == "/auth") return;
   const authUser = useAuthStore((state) => state.user);
   const showToast = useShowToast();
   const [isLoading, setIsLoading] = useState(false);
   const createPost = usePostStore((state) => state.createPost);
   const addPost = useUserProfileStore((state) => state.addPost);
-  const { pathname } = useLocation();
-  const { userProfile } = useGetUserProfileByUsername(authUser.username);
+  const { userProfile } = useGetUserProfileByUsername(authUser?.username);
+
   useEffect(() => {
     if (!userProfile) {
       console.log("Waiting for user profile to load...");

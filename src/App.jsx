@@ -6,13 +6,27 @@ import ProfilePage from "./Pages/ProfilePage/ProfilePage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebaseConfig";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
+import { Box, Spinner } from "@chakra-ui/react";
 
 function App() {
   const [authUser, loading] = useAuthState(auth);
 
-  // If still loading user authentication state, you can show a loader or placeholder.
   if (loading) {
-    return <div>Loading...</div>;
+    <Box
+      height={"100vh"}
+      borderRight={"1px solid"}
+      borderColor={"whiteAlpha.300"}
+      py={8}
+      position={"sticky"}
+      top={0}
+      left={0}
+      px={{ base: 2, md: 4 }}
+      display='flex'
+      alignItems='center'
+      justifyContent='center'
+    >
+      <Spinner color='white' />
+    </Box>;
   }
 
   return (
