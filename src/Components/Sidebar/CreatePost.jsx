@@ -35,6 +35,7 @@ import {
 import { firestore, storage } from "../../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
+import { Haunted } from "react-halloween";
 
 const CreatePost = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -56,6 +57,7 @@ const CreatePost = () => {
 
   return (
     <>
+    <Haunted  >
       <Tooltip
         hasArrow
         label={"Create"}
@@ -63,7 +65,7 @@ const CreatePost = () => {
         ml={1}
         openDelay={500}
         display={{ base: "block", md: "none" }}
-      >
+        >
         <Flex
           alignItems={"center"}
           gap={4}
@@ -73,11 +75,12 @@ const CreatePost = () => {
           w={{ base: 10, md: "full" }}
           justifyContent={{ base: "center", md: "flex-start" }}
           onClick={onOpen}
-        >
+          >
           <CreatePostLogo />
           <Box display={{ base: "none", md: "block" }}>Create</Box>
         </Flex>
       </Tooltip>
+            </Haunted>
 
       <Modal isOpen={isOpen} onClose={onClose} size='xl'>
         <ModalOverlay />
@@ -96,7 +99,7 @@ const CreatePost = () => {
               hidden
               ref={imageRef}
               onChange={handleImageChange}
-            />
+              />
 
             <BsFillImageFill
               onClick={() => imageRef.current.click()}
@@ -106,12 +109,12 @@ const CreatePost = () => {
                 cursor: "pointer",
               }}
               size={16}
-            />
+              />
             {selectedFile && (
               <Flex
-                mt={5}
-                w={"full"}
-                position={"relative"}
+              mt={5}
+              w={"full"}
+              position={"relative"}
                 justifyContent={"center"}
               >
                 <Image src={selectedFile} alt='Selected img' />
@@ -122,7 +125,7 @@ const CreatePost = () => {
                   onClick={() => {
                     setSelectedFile(null);
                   }}
-                />
+                  />
               </Flex>
             )}
           </ModalBody>

@@ -8,44 +8,54 @@ import { firestore } from "../firebase/firebaseConfig";
 
 const useGetFeedPosts = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null); // New state for error
   const { posts, setPosts } = usePostStore();
   const authUser = useAuthStore((state) => state.user);
   const showToast = useShowToast();
   const { setUserProfile } = useUserProfileStore();
 
+  const getFeedPosts = async () => {
+    setIsLoading(true);
+    setError(null); // Reset error on each fetch attempt
+
+    if (authUser.Following.length === 0) {
+      setIsLoading(false);
+      setPosts([]);
+      return;
+    }
+
+    const q = query(
+      collection(firestore, "posts"),
+      where("createdBy", "in", authUser.Following)
+    );
+
+    try {
+      const querySnapshot = await getDocs(q);
+      const feedPosts = [];
+
+      querySnapshot.forEach((doc) => {
+        feedPosts.push({ id: doc.id, ...doc.data() });
+      });
+
+      feedPosts.sort((a, b) => b.createdAt - a.createdAt);
+      setPosts(feedPosts);
+    } catch (err) {
+      setError(err.message); // Set the error state
+      showToast("Error", err.message, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const getFeedPosts = async () => {
-      setIsLoading(true);
-      if (authUser.Following.length === 0) {
-        setIsLoading(false);
-        setPosts([]);
-        return;
-      }
-      const q = query(
-        collection(firestore, "posts"),
-        where("createdBy", "in", authUser.Following)
-      );
-      try {
-        const querySnapshot = await getDocs(q);
-        const feedPosts = [];
-
-        querySnapshot.forEach((doc) => {
-          feedPosts.push({ id: doc.id, ...doc.data() });
-        });
-
-        feedPosts.sort((a, b) => b.createdAt - a.createdAt);
-        setPosts(feedPosts);
-      } catch (error) {
-        showToast("Error", error.message, "error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (authUser) getFeedPosts();
   }, [authUser, showToast, setPosts, setUserProfile]);
 
-  return { isLoading, posts };
+  const refresh = () => {
+    getFeedPosts(); // Call the fetch function to refresh posts
+  };
+
+  return { isLoading, posts, error, refresh }; // Return error and refresh
 };
 
 export default useGetFeedPosts;

@@ -20,7 +20,7 @@ const useSearchUser = () => {
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        return showToast("error", "User Not Found", "error");
+        return showToast("Error", "User Not Found", "error");
       }
 
       querySnapshot.forEach((doc) => {
@@ -31,6 +31,7 @@ const useSearchUser = () => {
       setUser(null);
     } finally {
       setIsLoading(false);
+      document.title = "Home 🎃";
     }
   };
 

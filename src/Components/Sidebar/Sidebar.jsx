@@ -5,6 +5,8 @@ import { BiLogOut } from "react-icons/bi";
 import useLogout from "../../hooks/useLogOut";
 import SidebarItems from "./SidebarItems";
 import { useEffect, useState } from "react";
+import { Eyes } from "react-halloween";
+import { motion } from "framer-motion";
 
 const Sidebar = () => {
   const { handleLogout, isLoggingOut } = useLogout();
@@ -48,8 +50,28 @@ const Sidebar = () => {
       top={0}
       left={0}
       px={{ base: 2, md: 4 }}
+      bgGradient='linear(to-b, #0D0D0D, #1A1A1A)'
+      overflow='hidden'
     >
-      <Flex direction={"column"} gap={10} w='full' height={"full"}>
+      {/* Floating spooky background */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.2, y: [0, 20, 0] }}
+        transition={{ repeat: Infinity, duration: 8 }}
+        style={{
+          position: "absolute",
+          top: "30%",
+          left: "10%",
+          width: "200px",
+          height: "200px",
+          backgroundImage: 'url("/path-to-ghost.png")',
+          backgroundSize: "contain",
+          zIndex: 0,
+        }}
+      />
+      
+      <Flex direction={"column"} gap={10} w='full' height={"full"} zIndex={1}>
+        {/* Logo with spooky animated eyes */}
         <Link
           to={"/"}
           as={RouterLink}
@@ -57,8 +79,16 @@ const Sidebar = () => {
           display={{ base: "none", md: "block" }}
           cursor='pointer'
         >
-          <InstagramLogo />
+          <motion.div
+            initial={{ opacity : 0  }}
+            animate={{ opacity : 1}}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Eyes irisColor={'#A020F0'} irisMotion='look-around' eyeBallColor={'red'} /> {/* Halloween Eyes */}
+          </motion.div>
         </Link>
+
+        {/* Mobile logo */}
         <Link
           to={"/"}
           as={RouterLink}
@@ -73,6 +103,7 @@ const Sidebar = () => {
         >
           <InstagramMobileLogo />
         </Link>
+
         <Flex direction={"column"} gap={5} cursor={"pointer"}>
           <SidebarItems />
         </Flex>
@@ -84,18 +115,20 @@ const Sidebar = () => {
           placement='right'
           ml={1}
           openDelay={500}
+          color='black'
           display={{ base: "block", md: "none" }}
         >
           <Flex
             onClick={handleLogout}
             alignItems={"center"}
             gap={4}
-            _hover={{ bg: "whiteAlpha.400" }}
+            _hover={{ bg: "whiteAlpha.400", transform: 'scale(1.05)' }}
             borderRadius={6}
             p={2}
             w={{ base: 10, md: "full" }}
             mt={"auto"}
             justifyContent={{ base: "center", md: "flex-start" }}
+            transition='transform 0.3s ease-in-out'
           >
             <BiLogOut size={25} />
             <Button

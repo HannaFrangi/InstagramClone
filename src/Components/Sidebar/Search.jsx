@@ -27,10 +27,11 @@ const Search = () => {
   const showToast = useShowToast();
 
   const handleSearchUser = (e) => {
+    document.title = "Searching 🔎";
     e.preventDefault();
     const inputValue = searchRef.current.value.trim().toLowerCase();
-    // console.log(inputValue);
     if (!inputValue) {
+      document.title = "No user";
       return showToast("Error", "please Enter a Username", "error");
     }
     getUserProfile(searchRef.current.value.toLowerCase());

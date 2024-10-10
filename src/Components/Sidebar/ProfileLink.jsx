@@ -1,6 +1,7 @@
 import { Avatar, Box, Link, Tooltip, Skeleton } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import useAuthStore from "../../store/authStore";
+import { MagicalText } from "react-halloween";
 
 const ProfileLink = () => {
   const authUser = useAuthStore((state) => state.user);
@@ -30,7 +31,8 @@ const ProfileLink = () => {
           <>
             <Avatar size={"sm"} src={authUser.profilePicURL || ""} />
             <Box display={{ base: "none", md: "block" }}>
-              {authUser.username}
+             
+            <MagicalText text= {authUser.username}  />
             </Box>
           </>
         ) : (
