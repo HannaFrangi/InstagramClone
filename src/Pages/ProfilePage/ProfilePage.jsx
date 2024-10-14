@@ -27,7 +27,6 @@ import { BiConfused } from "react-icons/bi";
 
 const ProfilePage = () => {
   const { username } = useParams();
-  console.log(username);
   const navigate = useNavigate();
   const { isLoading, userProfile } = useGetUserProfileByUsername(username);
   const pathname = useLocation();
@@ -43,7 +42,9 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const lowerCaseUsername = username.toLowerCase();
+    console.log(lowerCaseUsername);
     if (username !== lowerCaseUsername) {
+      console.log("navigating");
       navigate(`/${lowerCaseUsername}`, { replace: true });
     }
   }, [username, navigate]);
@@ -70,7 +71,10 @@ const ProfilePage = () => {
         flexDirection="column"
       >
         {!isLoading && userProfile && (
-          <ProfileHeader onOpenFollowersModal={handleOpenFollowersModal} />
+          <ProfileHeader
+            onOpenFollowersModal={handleOpenFollowersModal}
+            userProfile={userProfile}
+          />
         )}
         {isLoading && <ProfileHeaderSkeleton />}
       </Flex>

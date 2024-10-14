@@ -28,7 +28,6 @@ import { firestore, storage } from "../../firebase/firebaseConfig";
 import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import usePostStore from "../../store/postStore";
 import Caption from "../Comment/Caption";
-
 const ProfilePost = ({ post }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const userProfile = useUserProfileStore((state) => state.userProfile);
@@ -87,7 +86,6 @@ const ProfilePost = ({ post }) => {
           transition={"all 0.3s ease"}
           zIndex={1}
           justifyContent={"center"}
-          key={post.id}
         >
           <Flex alignItems={"center"} justifyContent={"center"} gap={50}>
             <Flex>
@@ -126,7 +124,7 @@ const ProfilePost = ({ post }) => {
           <ModalCloseButton />
           <ModalBody bg={"black"} pb={5}>
             <Flex
-              gap='4'
+              gap="4"
               w={{ base: "90%", sm: "70%", md: "full" }}
               mx={"auto"}
               maxH={"90vh"}
@@ -141,7 +139,7 @@ const ProfilePost = ({ post }) => {
                 justifyContent={"center"}
                 alignItems={"center"}
               >
-                <Image src={post.imageURL} alt='profile post' />
+                <Image src={post.imageURL} alt="profile post" />
               </Flex>
               <Flex
                 flex={1}
@@ -171,14 +169,14 @@ const ProfilePost = ({ post }) => {
                       onClick={handleDeletePost}
                       isLoading={isDeleting}
                     >
-                      <MdDelete size={20} cursor='pointer' />
+                      <MdDelete size={20} cursor="pointer" />
                     </Button>
                   )}
                 </Flex>
                 <Divider my={4} bg={"gray.500"} />
 
                 <VStack
-                  w='full'
+                  w="full"
                   alignItems={"start"}
                   maxH={"350px"}
                   overflowY={"auto"}

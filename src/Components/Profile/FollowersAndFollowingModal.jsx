@@ -165,7 +165,8 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                             </Box>
                           </VStack>
                         </Flex>
-                        <FollowUnfollowButton userId={followingUser.userId} />
+                        <FollowUnfollowButton userId={followingUser.uid} />{" "}
+                        {/* Use uid */}
                       </Flex>
                     </div>
                   ))
@@ -183,22 +184,20 @@ const FollowUnfollowButton = ({ userId }) => {
   const { isUpdating, isFollowing, handleFollowUser } = useFollowUser(userId);
 
   return (
-    <>
-      <Button
-        fontSize={13}
-        bg={"transparent"}
-        p={0}
-        h={"max-content"}
-        fontWeight={"medium"}
-        color={isFollowing ? "red.400" : "blue.400"}
-        cursor={"pointer"}
-        _hover={{ color: "white" }}
-        onClick={handleFollowUser}
-        isLoading={isUpdating}
-      >
-        {isFollowing ? "Unfollow" : "Follow"}
-      </Button>
-    </>
+    <Button
+      fontSize={13}
+      bg={"transparent"}
+      p={0}
+      h={"max-content"}
+      fontWeight={"medium"}
+      color={isFollowing ? "red.400" : "blue.400"}
+      cursor={"pointer"}
+      _hover={{ color: "white" }}
+      onClick={handleFollowUser}
+      isLoading={isUpdating}
+    >
+      {isFollowing ? "Unfollow" : "Follow"}
+    </Button>
   );
 };
 

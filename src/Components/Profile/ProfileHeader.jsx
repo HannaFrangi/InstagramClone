@@ -7,13 +7,11 @@ import {
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import useUserProfileStore from "../../store/userProfileStore";
 import useAuthStore from "../../store/authStore";
 import EditProfile from "./EditProfile";
 import useFollowUser from "../../hooks/useFollowUser";
 
-const ProfileHeader = ({ onOpenFollowersModal }) => {
-  const { userProfile } = useUserProfileStore();
+const ProfileHeader = ({ onOpenFollowersModal, userProfile }) => {
   const authUser = useAuthStore((state) => state.user);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isFollowing, isUpdating, handleFollowUser } = useFollowUser(
@@ -24,11 +22,9 @@ const ProfileHeader = ({ onOpenFollowersModal }) => {
   const visitingAnotherProfileAndAuth =
     authUser && authUser.username !== userProfile.username;
 
-
   const handleOpenFollowersModal = (tab) => {
-    onOpenFollowersModal(tab); 
+    onOpenFollowersModal(tab);
   };
-
 
   return (
     <Flex
@@ -42,7 +38,11 @@ const ProfileHeader = ({ onOpenFollowersModal }) => {
         alignSelf={"flex-start"}
         mx={"auto"}
       >
-        <Avatar src={userProfile.profilePicURL} name={userProfile.username} alt={userProfile.username} />
+        <Avatar
+          src={userProfile.profilePicURL}
+          name={userProfile.username}
+          alt={userProfile.username}
+        />
       </AvatarGroup>
 
       <VStack alignItems={"start"} gap={2} mx={"auto"} flex={1}>
@@ -87,14 +87,14 @@ const ProfileHeader = ({ onOpenFollowersModal }) => {
 
         <Flex alignItems={"center"} gap={{ base: 2, sm: 4 }}>
           <Text fontSize={{ base: "xs", md: "sm" }}>
-            <Text as='span' fontWeight={"bold"} mr={1}>
+            <Text as="span" fontWeight={"bold"} mr={1}>
               {userProfile.posts.length}
             </Text>
             Posts
           </Text>
           <Text fontSize={{ base: "xs", md: "sm" }}>
             <Text
-              as='button'
+              as="button"
               fontWeight={"bold"}
               mr={1}
               onClick={() => handleOpenFollowersModal("followers")}
@@ -104,10 +104,10 @@ const ProfileHeader = ({ onOpenFollowersModal }) => {
           </Text>
           <Text fontSize={{ base: "xs", md: "sm" }}>
             <Text
-              as='button'
+              as="button"
               fontWeight={"bold"}
               mr={1}
-              onClick={() => handleOpenFollowersModal("following")} 
+              onClick={() => handleOpenFollowersModal("following")}
             >
               {userProfile.Following.length} Following
             </Text>

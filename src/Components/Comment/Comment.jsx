@@ -8,7 +8,7 @@ const Comment = ({ comment }) => {
 
   if (isLoading) return <CommentSkeleton />;
   return (
-    <Flex gap={4} key={comment.id}>
+    <Flex gap={4}>
       <Link to={`/${userProfile.username.toLowerCase()}`}>
         <Avatar src={userProfile.profilePicURL} size={"sm"} />
       </Link>
@@ -34,7 +34,7 @@ export default Comment;
 const CommentSkeleton = () => {
   return (
     <Flex gap={4} w={"full"} alignItems={"center"}>
-      <SkeletonCircle h={10} w='10' />
+      <SkeletonCircle h={10} w="10" />
       <Flex gap={1} flexDir={"column"}>
         <Skeleton height={2} width={100} />
         <Skeleton height={2} width={50} />

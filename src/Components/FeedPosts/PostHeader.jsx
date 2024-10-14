@@ -9,11 +9,14 @@ import {
 import { Link } from "react-router-dom";
 import useFollowUser from "../../hooks/useFollowUser";
 import { timeAgo } from "../../utils/timeAgo";
+import useAuthStore from "../../store/authStore";
 
 const PostHeader = ({ post, creatorProfile }) => {
   const { handleFollowUser, isFollowing, isUpdating } = useFollowUser(
     post.createdBy
   );
+
+  const authUser = useAuthStore((state) => state.user); // Get the logged-in user
 
   return (
     <Flex
@@ -48,23 +51,27 @@ const PostHeader = ({ post, creatorProfile }) => {
           <Box color={"gray.500"}>• {timeAgo(post.createdAt)}</Box>
         </Flex>
       </Flex>
-      <Box cursor={"pointer"}>
-        <Button
-          size={"xs"}
-          bg={"transparent"}
-          fontSize={12}
-          color={"blue.500"}
-          fontWeight={"bold"}
-          _hover={{
-            color: "white",
-          }}
-          transition={"0.2s ease-in-out"}
-          onClick={handleFollowUser}
-          isLoading={isUpdating}
-        >
-          {isFollowing ? "Unfollow" : "Follow"}
-        </Button>
-      </Box>
+
+      {/* Conditionally render the follow button only if the logged-in user is not the creator */}
+      {authUser?.username !== creatorProfile?.username && (
+        <Box cursor={"pointer"}>
+          <Button
+            size={"xs"}
+            bg={"transparent"}
+            fontSize={12}
+            color={"blue.500"}
+            fontWeight={"bold"}
+            _hover={{
+              color: "white",
+            }}
+            transition={"0.2s ease-in-out"}
+            onClick={handleFollowUser}
+            isLoading={isUpdating}
+          >
+            {isFollowing ? "Unfollow" : "Follow"}
+          </Button>
+        </Box>
+      )}
     </Flex>
   );
 };

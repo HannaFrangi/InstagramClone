@@ -18,15 +18,24 @@ const useGetFeedPosts = () => {
     setIsLoading(true);
     setError(null); // Reset error on each fetch attempt
 
+    // if (authUser.Following.length === 0) {
+    //   setIsLoading(false);
+    //   setPosts([]);
+    //   return;
+    // }
+
     if (authUser.Following.length === 0) {
       setIsLoading(false);
-      setPosts([]);
-      return;
+      showToast(
+        "Warning",
+        "You are not following anyone ,Follow Someone!",
+        "warning"
+      );
     }
 
     const q = query(
-      collection(firestore, "posts"),
-      where("createdBy", "in", authUser.Following)
+      collection(firestore, "posts")
+      // where("createdBy", "in", authUser.Following)
     );
 
     try {

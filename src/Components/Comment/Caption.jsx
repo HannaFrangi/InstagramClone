@@ -7,7 +7,7 @@ const Caption = ({ post }) => {
   const userProfile = useUserProfileStore((state) => state.userProfile);
 
   return (
-    <Flex gap={4} key={post.id}>
+    <Flex gap={4}>
       <Link to={`/${userProfile.username}`}>
         <Avatar src={userProfile.profilePicURL} size={"sm"} />
       </Link>

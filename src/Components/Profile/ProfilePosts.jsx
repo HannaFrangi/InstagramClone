@@ -21,7 +21,7 @@ const ProfilePosts = () => {
         [0, 1, 2].map((_, idx) => (
           <VStack key={idx} alignItems={"flex-start"} gap={4}>
             <Skeleton w={"full"}>
-              <Box h='300px'>contents wrapped</Box>
+              <Box h="300px">contents wrapped</Box>
             </Skeleton>
           </VStack>
         ))}
@@ -41,7 +41,7 @@ export default ProfilePosts;
 
 const NoPostsFound = () => {
   return (
-    <Flex flexDir='column' textAlign={"center"} mx={"auto"} mt={10}>
+    <Flex flexDir="column" textAlign={"center"} mx={"auto"} mt={10}>
       <Text fontSize={"2xl"}>No Posts Found🤔</Text>
     </Flex>
   );
