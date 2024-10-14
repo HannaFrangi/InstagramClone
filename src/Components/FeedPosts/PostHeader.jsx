@@ -27,15 +27,16 @@ const PostHeader = ({ post, creatorProfile }) => {
           <Link to={`/${creatorProfile.username}`}>
             <Avatar
               src={creatorProfile.profilePicURL}
-              alt='user profile pic'
+              alt={creatorProfile.username}
+              name={creatorProfile.username}
               size={"sm"}
             />
           </Link>
         ) : (
-          <SkeletonCircle size='10' />
+          <SkeletonCircle size="10" />
         )}
 
-        <Flex fontSize={12} fontWeight={"bold"} gap='2'>
+        <Flex fontSize={12} fontWeight={"bold"} gap="2">
           {creatorProfile ? (
             <Link to={`/${creatorProfile.username}`}>
               {creatorProfile.username}

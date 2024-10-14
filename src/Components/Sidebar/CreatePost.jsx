@@ -35,7 +35,6 @@ import {
 import { firestore, storage } from "../../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
-import { Haunted } from "react-halloween";
 
 const CreatePost = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -57,7 +56,6 @@ const CreatePost = () => {
 
   return (
     <>
-    <Haunted  >
       <Tooltip
         hasArrow
         label={"Create"}
@@ -80,7 +78,6 @@ const CreatePost = () => {
           <Box display={{ base: "none", md: "block" }}>Create</Box>
         </Flex>
       </Tooltip>
-            </Haunted>
 
       <Modal isOpen={isOpen} onClose={onClose} size='xl'>
         <ModalOverlay />
@@ -153,13 +150,13 @@ function useCreatePost() {
   const addPost = useUserProfileStore((state) => state.addPost);
   const { userProfile } = useGetUserProfileByUsername(authUser?.username);
 
-  useEffect(() => {
-    if (!userProfile) {
-      console.log("Waiting for user profile to load...");
-    } else {
-      console.log("User profile loaded:", userProfile);
-    }
-  }, [userProfile]);
+  // useEffect(() => {
+  //   if (!userProfile) {
+  //     console.log("Waiting for user profile to load...");
+  //   } else {
+  //     console.log("User profile loaded:", userProfile);
+  //   }
+  // }, [userProfile]);
 
   const handleCreatePost = async (selectedFile, caption) => {
     if (isLoading) return;

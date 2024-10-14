@@ -73,18 +73,19 @@ const EditProfile = ({ isOpen, onClose }) => {
                   <Stack direction={["column", "row"]} spacing={6}>
                     <Center>
                       <Avatar
-                        size='xl'
+                        size="xl"
                         src={selectedFile || authUser.profilePicURL}
                         border={"2px solid white "}
+                        name={authUser.username}
                       />
                     </Center>
-                    <Center w='full'>
-                      <Button w='full' onClick={() => fileRef.current.click()}>
+                    <Center w="full">
+                      <Button w="full" onClick={() => fileRef.current.click()}>
                         Edit Profile Picture
                       </Button>
                     </Center>
                     <Input
-                      type='file'
+                      type="file"
                       hidden
                       ref={fileRef}
                       onChange={handleImageChange}
@@ -135,8 +136,8 @@ const EditProfile = ({ isOpen, onClose }) => {
                   <Button
                     bg={"red.400"}
                     color={"white"}
-                    w='full'
-                    size='sm'
+                    w="full"
+                    size="sm"
                     _hover={{ bg: "red.500" }}
                     onClick={onClose}
                   >
@@ -145,8 +146,8 @@ const EditProfile = ({ isOpen, onClose }) => {
                   <Button
                     bg={"blue.400"}
                     color={"white"}
-                    size='sm'
-                    w='full'
+                    size="sm"
+                    w="full"
                     _hover={{ bg: "blue.500" }}
                     onClick={handleEditProfile}
                     isLoading={isUpdating}

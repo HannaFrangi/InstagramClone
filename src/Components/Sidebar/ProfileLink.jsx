@@ -10,7 +10,7 @@ const ProfileLink = () => {
     <Tooltip
       hasArrow
       label={"Profile"}
-      placement='right'
+      placement="right"
       ml={1}
       openDelay={500}
       display={{ base: "block", md: "none" }}
@@ -29,18 +29,21 @@ const ProfileLink = () => {
       >
         {authUser ? (
           <>
-            <Avatar size={"sm"} src={authUser.profilePicURL || ""} />
+            <Avatar
+              size={"sm"}
+              src={authUser.profilePicURL || ""}
+              name={authUser.username}
+            />
             <Box display={{ base: "none", md: "block" }}>
-             
-            <MagicalText text= {authUser.username}  />
+              <MagicalText text={authUser.username} />
             </Box>
           </>
         ) : (
           <>
-            <Skeleton circle size='40px' />
+            <Skeleton circle size="40px" />
             <Skeleton
-              height='20px'
-              width='100px'
+              height="20px"
+              width="100px"
               display={{ base: "none", md: "block" }}
             />
           </>

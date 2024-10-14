@@ -42,6 +42,7 @@ const ProfilePost = ({ post }) => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
     if (isDeleting) return;
 
+    setIsDeleting(true);
     try {
       const imageRef = ref(storage, `posts/${post.id}`);
       await deleteObject(imageRef);
@@ -153,7 +154,7 @@ const ProfilePost = ({ post }) => {
                     <Avatar
                       src={userProfile.profilePicURL}
                       size={"sm"}
-                      name='As a Programmer'
+                      name={userProfile.username}
                     />
                     <Text fontWeight={"bold"} fontSize={12}>
                       {userProfile.username}
@@ -183,7 +184,7 @@ const ProfilePost = ({ post }) => {
                   overflowY={"auto"}
                 >
                   {/* CAPTION */}
-                  {post.caption && <Caption post={post} />}
+                  {post.caption && <Caption post={post} key={post.id} />}
                   {/* COMMENTS */}
                   {post.comments.map((comment) => (
                     <Comment key={comment.id} comment={comment} />

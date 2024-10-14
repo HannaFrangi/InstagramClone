@@ -12,7 +12,7 @@ import useAuthStore from "../../store/authStore";
 import EditProfile from "./EditProfile";
 import useFollowUser from "../../hooks/useFollowUser";
 
-const ProfileHeader = () => {
+const ProfileHeader = ({ onOpenFollowersModal }) => {
   const { userProfile } = useUserProfileStore();
   const authUser = useAuthStore((state) => state.user);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -23,6 +23,12 @@ const ProfileHeader = () => {
     authUser && authUser.username === userProfile.username;
   const visitingAnotherProfileAndAuth =
     authUser && authUser.username !== userProfile.username;
+
+
+  const handleOpenFollowersModal = (tab) => {
+    onOpenFollowersModal(tab); 
+  };
+
 
   return (
     <Flex
@@ -36,7 +42,7 @@ const ProfileHeader = () => {
         alignSelf={"flex-start"}
         mx={"auto"}
       >
-        <Avatar src={userProfile.profilePicURL} alt='As a programmer logo' />
+        <Avatar src={userProfile.profilePicURL} name={userProfile.username} alt={userProfile.username} />
       </AvatarGroup>
 
       <VStack alignItems={"start"} gap={2} mx={"auto"} flex={1}>
@@ -87,16 +93,24 @@ const ProfileHeader = () => {
             Posts
           </Text>
           <Text fontSize={{ base: "xs", md: "sm" }}>
-            <Text as='span' fontWeight={"bold"} mr={1}>
-              {userProfile.Followers.length}
+            <Text
+              as='button'
+              fontWeight={"bold"}
+              mr={1}
+              onClick={() => handleOpenFollowersModal("followers")}
+            >
+              {userProfile.Followers.length} Followers
             </Text>
-            Followers
           </Text>
           <Text fontSize={{ base: "xs", md: "sm" }}>
-            <Text as='span' fontWeight={"bold"} mr={1}>
-              {userProfile.Following.length}
+            <Text
+              as='button'
+              fontWeight={"bold"}
+              mr={1}
+              onClick={() => handleOpenFollowersModal("following")} 
+            >
+              {userProfile.Following.length} Following
             </Text>
-            Following
           </Text>
         </Flex>
         <Flex alignItems={"center"} gap={4}>

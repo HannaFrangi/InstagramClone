@@ -31,11 +31,11 @@ const Sidebar = () => {
         top={0}
         left={0}
         px={{ base: 2, md: 4 }}
-        display='flex'
-        alignItems='center'
-        justifyContent='center'
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
       >
-        <Spinner color='white' />
+        <Spinner color="white" />
       </Box>
     );
   }
@@ -50,10 +50,9 @@ const Sidebar = () => {
       top={0}
       left={0}
       px={{ base: 2, md: 4 }}
-      bgGradient='linear(to-b, #0D0D0D, #1A1A1A)'
-      overflow='hidden'
+      bgGradient="linear(to-b, #0D0D0D, #1A1A1A)"
+      overflow="hidden"
     >
-      {/* Floating spooky background */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.2, y: [0, 20, 0] }}
@@ -69,22 +68,27 @@ const Sidebar = () => {
           zIndex: 0,
         }}
       />
-      
-      <Flex direction={"column"} gap={10} w='full' height={"full"} zIndex={1}>
+
+      <Flex direction={"column"} gap={10} w="full" height={"full"} zIndex={1}>
         {/* Logo with spooky animated eyes */}
         <Link
           to={"/"}
           as={RouterLink}
           pl={2}
           display={{ base: "none", md: "block" }}
-          cursor='pointer'
+          cursor="pointer"
         >
           <motion.div
-            initial={{ opacity : 0  }}
-            animate={{ opacity : 1}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <Eyes irisColor={'#A020F0'} irisMotion='look-around' eyeBallColor={'red'} /> {/* Halloween Eyes */}
+            <Eyes
+              irisColor={"#A020F0"}
+              irisMotion="look-around"
+              eyeBallColor={"red"}
+            />{" "}
+            {/* Halloween Eyes */}
           </motion.div>
         </Link>
 
@@ -99,7 +103,7 @@ const Sidebar = () => {
             bg: "whiteAlpha.200",
           }}
           w={10}
-          cursor='pointer'
+          cursor="pointer"
         >
           <InstagramMobileLogo />
         </Link>
@@ -112,23 +116,23 @@ const Sidebar = () => {
         <Tooltip
           hasArrow
           label={"Logout"}
-          placement='right'
+          placement="right"
           ml={1}
           openDelay={500}
-          color='black'
+          color="black"
           display={{ base: "block", md: "none" }}
         >
           <Flex
             onClick={handleLogout}
             alignItems={"center"}
             gap={4}
-            _hover={{ bg: "whiteAlpha.400", transform: 'scale(1.05)' }}
+            _hover={{ bg: "whiteAlpha.400", transform: "scale(1.05)" }}
             borderRadius={6}
             p={2}
             w={{ base: 10, md: "full" }}
             mt={"auto"}
             justifyContent={{ base: "center", md: "flex-start" }}
-            transition='transform 0.3s ease-in-out'
+            transition="transform 0.3s ease-in-out"
           >
             <BiLogOut size={25} />
             <Button
