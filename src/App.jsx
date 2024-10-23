@@ -7,6 +7,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebaseConfig";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
 import { Box, Spinner } from "@chakra-ui/react";
+import Test from "./Pages/Test";
 
 function App() {
   const [authUser, loading] = useAuthState(auth);
@@ -21,11 +22,11 @@ function App() {
       top={0}
       left={0}
       px={{ base: 2, md: 4 }}
-      display='flex'
-      alignItems='center'
-      justifyContent='center'
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
     >
-      <Spinner color='white' />
+      <Spinner color="white" />
     </Box>;
   }
 
@@ -33,18 +34,19 @@ function App() {
     <PageLayout>
       <Routes>
         <Route
-          path='/'
-          element={authUser ? <HomePage /> : <Navigate to='/auth' />}
+          path="/"
+          element={authUser ? <HomePage /> : <Navigate to="/auth" />}
         />
         <Route
-          path='/auth'
-          element={!authUser ? <AuthPage /> : <Navigate to='/' />}
+          path="/auth"
+          element={!authUser ? <AuthPage /> : <Navigate to="/" />}
         />
-        <Route path='/reset-password/' element={<ResetPassword />} />
+        <Route path="/reset-password/" element={<ResetPassword />} />
         <Route
-          path='/:username'
-          element={authUser ? <ProfilePage /> : <Navigate to='/auth' />}
+          path="/:username"
+          element={authUser ? <ProfilePage /> : <Navigate to="/auth" />}
         />
+        <Route path="/test" element={<Test />} />{" "}
       </Routes>
     </PageLayout>
   );

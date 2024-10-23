@@ -18,6 +18,7 @@ import {
   Avatar,
   Button,
   Center,
+  Spinner, // Add Spinner component from Chakra UI
 } from "@chakra-ui/react";
 import { useParams, Link } from "react-router-dom";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
@@ -31,6 +32,7 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
   const [following, setFollowing] = useState([]);
   const [followerIds, setFollowerIds] = useState([]);
   const [followingIds, setFollowingIds] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // State to track loading
 
   const { userProfile } = useGetUserProfileByUsername(username);
 
@@ -38,12 +40,21 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
     setTabIndex(activeTab === "followers" ? 0 : 1);
   }, [activeTab]);
 
+  // Set timeout to fetch data when modal opens
   useEffect(() => {
-    if (userProfile) {
-      setFollowerIds(userProfile.Followers);
-      setFollowingIds(userProfile.Following);
+    let timeoutId;
+    if (isOpen) {
+      setIsLoading(true); // Set loading to true when modal opens
+      timeoutId = setTimeout(() => {
+        if (userProfile) {
+          setFollowerIds(userProfile.Followers);
+          setFollowingIds(userProfile.Following);
+        }
+      }, 1000); // 1-second delay
     }
-  }, [userProfile]);
+
+    return () => clearTimeout(timeoutId); // Clear timeout on cleanup
+  }, [isOpen, userProfile]);
 
   const { userProfiles: followersProfiles } =
     useGetUserProfilesByIds(followerIds);
@@ -51,11 +62,17 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
     useGetUserProfilesByIds(followingIds);
 
   useEffect(() => {
-    setFollowers(followersProfiles || []);
+    if (followersProfiles) {
+      setFollowers(followersProfiles);
+      setIsLoading(false); // Set loading to false when followers are loaded
+    }
   }, [followersProfiles]);
 
   useEffect(() => {
-    setFollowing(followingProfiles || []);
+    if (followingProfiles) {
+      setFollowing(followingProfiles);
+      setIsLoading(false); // Set loading to false when following users are loaded
+    }
   }, [followingProfiles]);
 
   const handleClose = () => {
@@ -90,7 +107,11 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
             </TabList>
             <TabPanels>
               <TabPanel>
-                {followers.length === 0 ? (
+                {isLoading ? ( // Display Spinner while loading followers
+                  <Center>
+                    <Spinner size="lg" />
+                  </Center>
+                ) : followers.length === 0 ? (
                   <Center>
                     <Text>No followers yet.</Text>
                   </Center>
@@ -129,7 +150,11 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                 )}
               </TabPanel>
               <TabPanel>
-                {following.length === 0 ? (
+                {isLoading ? ( // Display Spinner while loading following
+                  <Center>
+                    <Spinner size="lg" />
+                  </Center>
+                ) : following.length === 0 ? (
                   <Center>
                     <Text>Not following anyone yet.</Text>
                   </Center>
@@ -201,4 +226,4 @@ const FollowUnfollowButton = ({ userId }) => {
   );
 };
 
-export default React.memo(FollowersAndFollowingModal);
+export default FollowersAndFollowingModal;

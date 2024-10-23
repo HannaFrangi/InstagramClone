@@ -10,8 +10,9 @@ import Navbar from "../../Components/Navbar/NavBar";
 const PageLayout = ({ children }) => {
   const { pathname } = useLocation();
   const [user, loading] = useAuthState(auth);
-  const canRenderSidebar = pathname !== "/auth" && user;
-  const canRenderNavbar = !user && !loading && pathname !== "/auth";
+  const canRenderSidebar = pathname !== "/auth" && user && pathname !== "/test";
+  const canRenderNavbar =
+    !user && !loading && pathname !== "/auth" && pathname !== "/test";
 
   const checkingUserIsAuth = !user && loading;
   if (checkingUserIsAuth) return <PageLayoutSpinner />;
@@ -43,12 +44,12 @@ export default PageLayout;
 const PageLayoutSpinner = () => {
   return (
     <Flex
-      flexDir='column'
-      h='100vh'
-      alignItems='center'
-      justifyContent='center'
+      flexDir="column"
+      h="100vh"
+      alignItems="center"
+      justifyContent="center"
     >
-      <Spinner size='xl' />
+      <Spinner size="xl" />
     </Flex>
   );
 };
