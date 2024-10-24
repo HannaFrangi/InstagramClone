@@ -7,7 +7,6 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebaseConfig";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
 import { Box, Spinner } from "@chakra-ui/react";
-import Test from "./Pages/Test";
 
 function App() {
   const [authUser, loading] = useAuthState(auth);
@@ -46,7 +45,6 @@ function App() {
           path="/:username"
           element={authUser ? <ProfilePage /> : <Navigate to="/auth" />}
         />
-        <Route path="/test" element={<Test />} />{" "}
       </Routes>
     </PageLayout>
   );

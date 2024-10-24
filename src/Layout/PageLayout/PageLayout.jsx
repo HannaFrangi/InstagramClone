@@ -10,9 +10,8 @@ import Navbar from "../../Components/Navbar/NavBar";
 const PageLayout = ({ children }) => {
   const { pathname } = useLocation();
   const [user, loading] = useAuthState(auth);
-  const canRenderSidebar = pathname !== "/auth" && user && pathname !== "/test";
-  const canRenderNavbar =
-    !user && !loading && pathname !== "/auth" && pathname !== "/test";
+  const canRenderSidebar = pathname !== "/auth" && user;
+  const canRenderNavbar = !user && !loading && pathname !== "/auth";
 
   const checkingUserIsAuth = !user && loading;
   if (checkingUserIsAuth) return <PageLayoutSpinner />;

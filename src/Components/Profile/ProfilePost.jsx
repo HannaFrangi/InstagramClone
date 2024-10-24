@@ -25,9 +25,20 @@ import useShowToast from "../../hooks/useShowToast";
 import { useState } from "react";
 import { deleteObject, ref } from "firebase/storage";
 import { firestore, storage } from "../../firebase/firebaseConfig";
-import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 import usePostStore from "../../store/postStore";
 import Caption from "../Comment/Caption";
+
 const ProfilePost = ({ post }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const userProfile = useUserProfileStore((state) => state.userProfile);
@@ -43,6 +54,7 @@ const ProfilePost = ({ post }) => {
 
     setIsDeleting(true);
     try {
+      console.log(post.id);
       const imageRef = ref(storage, `posts/${post.id}`);
       await deleteObject(imageRef);
       const userRef = doc(firestore, "users", authUser.uid);
@@ -51,6 +63,21 @@ const ProfilePost = ({ post }) => {
       await updateDoc(userRef, {
         posts: arrayRemove(post.id),
       });
+
+      const notificationsQuery = query(
+        collection(firestore, "notifications"),
+        where("postId", "==", post.id)
+      );
+
+      const notificationsSnapshot = await getDocs(notificationsQuery);
+
+      const batch = writeBatch(firestore);
+
+      notificationsSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      await batch.commit();
 
       deletePost(post.id);
       decrementPostsCount(post.id);

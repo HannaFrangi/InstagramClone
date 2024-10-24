@@ -59,11 +59,11 @@ const CreatePost = () => {
       <Tooltip
         hasArrow
         label={"Create"}
-        placement='right'
+        placement="right"
         ml={1}
         openDelay={500}
         display={{ base: "block", md: "none" }}
-        >
+      >
         <Flex
           alignItems={"center"}
           gap={4}
@@ -73,30 +73,30 @@ const CreatePost = () => {
           w={{ base: 10, md: "full" }}
           justifyContent={{ base: "center", md: "flex-start" }}
           onClick={onOpen}
-          >
+        >
           <CreatePostLogo />
           <Box display={{ base: "none", md: "block" }}>Create</Box>
         </Flex>
       </Tooltip>
 
-      <Modal isOpen={isOpen} onClose={onClose} size='xl'>
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent bg={"black"} border={"1px solid gray"}>
           <ModalHeader>Create Post</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <Textarea
-              placeholder='Post caption...'
+              placeholder="Post caption..."
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
             />
 
             <Input
-              type='file'
+              type="file"
               hidden
               ref={imageRef}
               onChange={handleImageChange}
-              />
+            />
 
             <BsFillImageFill
               onClick={() => imageRef.current.click()}
@@ -106,15 +106,15 @@ const CreatePost = () => {
                 cursor: "pointer",
               }}
               size={16}
-              />
+            />
             {selectedFile && (
               <Flex
-              mt={5}
-              w={"full"}
-              position={"relative"}
+                mt={5}
+                w={"full"}
+                position={"relative"}
                 justifyContent={"center"}
               >
-                <Image src={selectedFile} alt='Selected img' />
+                <Image src={selectedFile} alt="Selected img" />
                 <CloseButton
                   position={"absolute"}
                   top={2}
@@ -122,7 +122,7 @@ const CreatePost = () => {
                   onClick={() => {
                     setSelectedFile(null);
                   }}
-                  />
+                />
               </Flex>
             )}
           </ModalBody>
@@ -183,12 +183,12 @@ function useCreatePost() {
 
       newPost.imageURL = downloadURL;
 
-      if (userProfile.uid === authUser.uid) {
-        createPost({ ...newPost, id: postDocRef.id });
-        console.log("Post created successfully for user:", userProfile.uid);
-      } else {
-        console.error("User profile uid does not match.");
-      }
+      // if (userProfile.uid === authUser.uid) {
+      //   createPost({ ...newPost, id: postDocRef.id });
+      //   console.log("Post created successfully for user:", userProfile.uid);
+      // } else {
+      //   console.error("User profile uid does not match.");
+      // }
 
       if (pathname !== "/" && userProfile.uid === authUser.uid) {
         addPost({ ...newPost, id: postDocRef.id });
