@@ -17,24 +17,26 @@ const PageLayout = ({ children }) => {
   if (checkingUserIsAuth) return <PageLayoutSpinner />;
 
   return (
-    <Flex flexDir={canRenderNavbar ? "column" : "row"}>
-      {/* sidebar on the left */}
-      {canRenderSidebar ? (
-        <Box w={{ base: "70px", md: "240px" }}>
-          <Sidebar />
+    <>
+      <Flex flexDir={canRenderNavbar ? "column" : "row"}>
+        {/* sidebar on the left */}
+        {canRenderSidebar ? (
+          <Box w={{ base: "70px", md: "240px" }}>
+            <Sidebar />
+          </Box>
+        ) : null}
+        {/* Navbar */}
+        {canRenderNavbar ? <Navbar /> : null}
+        {/* the page content on the right */}
+        <Box
+          flex={1}
+          w={{ base: "calc(100% - 70px)", md: "calc(100% - 240px)" }}
+          mx={"auto"}
+        >
+          {children}
         </Box>
-      ) : null}
-      {/* Navbar */}
-      {canRenderNavbar ? <Navbar /> : null}
-      {/* the page content on the right */}
-      <Box
-        flex={1}
-        w={{ base: "calc(100% - 70px)", md: "calc(100% - 240px)" }}
-        mx={"auto"}
-      >
-        {children}
-      </Box>
-    </Flex>
+      </Flex>
+    </>
   );
 };
 

@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { CreatePostLogo } from "../../Assets/Contents";
 import { BsFillImageFill } from "react-icons/bs";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import usePreviewImg from "../../hooks/usePreviewImage";
 import useShowToast from "../../hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
@@ -61,7 +61,7 @@ const CreatePost = () => {
         label={"Create"}
         placement="right"
         ml={1}
-        openDelay={500}
+        openDelay={200}
         display={{ base: "block", md: "none" }}
       >
         <Flex

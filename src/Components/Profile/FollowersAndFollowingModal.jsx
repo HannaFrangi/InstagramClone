@@ -150,7 +150,7 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                 )}
               </TabPanel>
               <TabPanel>
-                {isLoading ? ( // Display Spinner while loading following
+                {isLoading ? (
                   <Center>
                     <Spinner size="lg" />
                   </Center>
@@ -160,7 +160,7 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                   </Center>
                 ) : (
                   following.map((followingUser) => (
-                    <div style={{ marginTop: "20px" }} key={followingUser.uid}>
+                    <Box style={{ marginTop: "20px" }} key={followingUser.uid}>
                       <Flex
                         justifyContent={"space-between"}
                         alignItems={"center"}
@@ -193,7 +193,7 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                         <FollowUnfollowButton userId={followingUser.uid} />{" "}
                         {/* Use uid */}
                       </Flex>
-                    </div>
+                    </Box>
                   ))
                 )}
               </TabPanel>

@@ -42,7 +42,6 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const lowerCaseUsername = username.toLowerCase();
-    console.log(lowerCaseUsername);
     if (username !== lowerCaseUsername) {
       console.log("navigating");
       navigate(`/${lowerCaseUsername}`, { replace: true });

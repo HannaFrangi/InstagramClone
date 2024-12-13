@@ -3,13 +3,13 @@ import useShowToast from "./useShowToast";
 import useAuthStore from "../store/authStore";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseConfig";
-import usePostStore from "../store/postStore";
+// import usePostStore from "../store/postStore";
 
 const usePostComment = () => {
   const [isCommenting, setIsCommenting] = useState(false);
   const showToast = useShowToast();
   const authUser = useAuthStore((state) => state.user);
-  const addComment = usePostStore((state) => state.addComment);
+  // const addComment = usePostStore((state) => state.addComment);
 
   const handlePostComment = async (postId, comment) => {
     if (isCommenting) return;
@@ -30,7 +30,7 @@ const usePostComment = () => {
       await updateDoc(doc(firestore, "posts", postId), {
         comments: arrayUnion(newComment),
       });
-      addComment(postId, newComment);
+      // addComment(postId, newComment);
     } catch (error) {
       showToast("Error", error.message, "error");
     } finally {

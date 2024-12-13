@@ -22,17 +22,17 @@ const SuggestedUsers = () => {
             justifyContent={"space-between"}
             w={"full"}
           >
-            <Text fontSize={12} fontWeight={"bold"} color={"gray.500"}>
+            <Text fontSize={12} fontWeight={"bold"}>
               Suggested For You :
             </Text>
-            <Text
+            {/* <Text
               fontSize={12}
               fontWeight={"bold"}
-              cursor={"pointer"}
+              // cursor={"pointer"}
               _hover={{ color: "gray.500" }}
             >
               See all
-            </Text>
+            </Text> */}
           </Flex>
         )}
 
@@ -41,8 +41,8 @@ const SuggestedUsers = () => {
         ))}
         <Box fontSize={12} color={"gray.500"} mt={5}>
           <Link
-            href='https://github.com/HannaFrangi'
-            target='_blank'
+            href="https://github.com/HannaFrangi"
+            target="_blank"
             color={"blue.500"}
           >
             2024

@@ -29,9 +29,6 @@ const useGetFeedPosts = () => {
       return;
     }
 
-    // Debug log for following list
-    console.log("Following list: ", authUser.Following);
-
     // Query posts created by followed users
     const q = query(
       collection(firestore, "posts")
@@ -55,9 +52,6 @@ const useGetFeedPosts = () => {
           feedPosts.push({ id: doc.id, ...doc.data() });
         });
 
-        // Debug log for fetched posts
-        console.log("Fetched posts: ", feedPosts);
-
         // Sort posts by creation date
         feedPosts.sort((a, b) => b.createdAt - a.createdAt);
         setPosts(feedPosts);
@@ -70,15 +64,15 @@ const useGetFeedPosts = () => {
       }
     );
 
-    return unsubscribe; // Cleanup listener on unmount
+    return unsubscribe;
   };
 
   useEffect(() => {
     if (!authUser) return;
 
-    const unsubscribe = getFeedPosts(); // Call the function to fetch posts initially
+    const unsubscribe = getFeedPosts();
 
-    return () => unsubscribe && unsubscribe(); // Cleanup listener when component unmounts
+    return () => unsubscribe && unsubscribe();
   }, [authUser, setPosts, showToast]);
 
   const refresh = () => {

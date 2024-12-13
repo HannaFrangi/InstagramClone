@@ -47,6 +47,7 @@ import {
 import { firestore, storage } from "../../firebase/firebaseConfig";
 import useGetFeedPosts from "../../hooks/useGetFeedPosts";
 import usePostStore from "../../store/postStore";
+import { Link } from "react-router-dom";
 
 const Notifications = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -107,11 +108,7 @@ const Notifications = () => {
               </Box>
             )}
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </>
@@ -166,7 +163,6 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
         collection(firestore, "notifications"),
         where("postId", "==", notification.postId)
       );
-      console.log(notification.postId);
       const notificationsSnapshot = await getDocs(notificationsQuery);
 
       const batch = writeBatch(firestore);
@@ -189,6 +185,7 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
       setIsDeleting(false);
     }
   };
+  const { onClose: chakraOnClose } = useDisclosure();
 
   return (
     <>
@@ -206,21 +203,25 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
           </Center>
         ) : (
           <Flex alignItems="center" gap={2} w="full">
-            <Avatar
-              name={userProfile?.fullName}
-              src={userProfile?.profilePicURL}
-            />
-            <Text>
-              <strong>{userProfile?.fullName}</strong> liked your post{" "}
+            <Link to={`/${userProfile?.username}`}>
+              <Avatar
+                name={userProfile?.fullName}
+                src={userProfile?.profilePicURL}
+                onClick={onClose}
+                cursor={"pointer"}
+              />
+            </Link>
+            <Text onClick={onClose} cursor={"pointer"}>
+              <strong>{userProfile?.fullName}</strong> liked{" "}
               <Text
                 as="span"
-                color="blue.400"
+                color="red.400"
                 onClick={handlePostClick}
                 cursor="pointer"
               >
-                "View Post"
+                Your Post
               </Text>
-              .
+              ❤
             </Text>
             <Button
               variant="ghost"

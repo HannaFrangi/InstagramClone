@@ -5,7 +5,7 @@ import { BiLogOut } from "react-icons/bi";
 import useLogout from "../../hooks/useLogOut";
 import SidebarItems from "./SidebarItems";
 import { useEffect, useState } from "react";
-import { Eyes } from "react-halloween";
+// import { Eyes } from "react-halloween";
 import { motion } from "framer-motion";
 
 const Sidebar = () => {
@@ -53,24 +53,7 @@ const Sidebar = () => {
       bgGradient="linear(to-b, #0D0D0D, #1A1A1A)"
       overflow="hidden"
     >
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.2, y: [0, 20, 0] }}
-        transition={{ repeat: Infinity, duration: 8 }}
-        style={{
-          position: "absolute",
-          top: "30%",
-          left: "10%",
-          width: "200px",
-          height: "200px",
-          backgroundImage: 'url("/path-to-ghost.png")',
-          backgroundSize: "contain",
-          zIndex: 0,
-        }}
-      />
-
       <Flex direction={"column"} gap={10} w="full" height={"full"} zIndex={1}>
-        {/* Logo with spooky animated eyes */}
         <Link
           to={"/"}
           as={RouterLink}
@@ -83,12 +66,7 @@ const Sidebar = () => {
             animate={{ opacity: 1 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <Eyes
-              irisColor={"#A020F0"}
-              irisMotion="look-around"
-              eyeBallColor={"red"}
-            />{" "}
-            {/* Halloween Eyes */}
+            <InstagramLogo />
           </motion.div>
         </Link>
 

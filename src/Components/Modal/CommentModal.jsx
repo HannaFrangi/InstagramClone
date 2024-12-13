@@ -36,7 +36,7 @@ const CommentsModal = ({ isOpen, onClose, post }) => {
   }, [isOpen, post.comments.length]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} motionPreset='slideInLeft'>
+    <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInLeft">
       <ModalOverlay />
       <ModalContent bg={"black"} border={"1px solid gray"} maxW={"400px"}>
         <ModalHeader>Comments</ModalHeader>
@@ -55,10 +55,10 @@ const CommentsModal = ({ isOpen, onClose, post }) => {
             ))}
           </Flex>
           <form onSubmit={handleSubmitComment} style={{ marginTop: "2rem" }}>
-            <Input placeholder='Comment' size={"sm"} ref={commentRef} />
+            <Input placeholder="Comment" size={"sm"} ref={commentRef} />
             <Flex w={"full"} justifyContent={"flex-end"}>
               <Button
-                type='submit'
+                type="submit"
                 ml={"auto"}
                 size={"sm"}
                 my={4}

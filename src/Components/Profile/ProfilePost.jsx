@@ -54,7 +54,6 @@ const ProfilePost = ({ post }) => {
 
     setIsDeleting(true);
     try {
-      console.log(post.id);
       const imageRef = ref(storage, `posts/${post.id}`);
       await deleteObject(imageRef);
       const userRef = doc(firestore, "users", authUser.uid);
