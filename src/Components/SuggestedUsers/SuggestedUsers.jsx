@@ -45,7 +45,7 @@ const SuggestedUsers = () => {
             target="_blank"
             color={"blue.500"}
           >
-            2024
+            {new Date().getFullYear()}
           </Link>
         </Box>
       </VStack>

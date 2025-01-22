@@ -22,7 +22,7 @@ import useShowToast from "../../hooks/useShowToast";
 
 const Search = () => {
   const { isOpen, onOpen, onClose: chakraOnClose } = useDisclosure();
-  const { user, isLoading, getUserProfile, setUser } = useSearchUser();
+  const { users, isLoading, getUserProfile, setUsers } = useSearchUser();
   const searchRef = useRef(null);
   const showToast = useShowToast();
 
@@ -32,13 +32,13 @@ const Search = () => {
     const inputValue = searchRef.current.value.trim().toLowerCase();
     if (!inputValue) {
       document.title = "No user";
-      return showToast("Error", "please Enter a Username", "error");
+      return showToast("Error", "Please enter a username", "error");
     }
-    getUserProfile(searchRef.current.value.toLowerCase());
+    getUserProfile(inputValue);
   };
 
   const handleClose = () => {
-    setUser(null);
+    setUsers([]);
     if (searchRef.current) searchRef.current.value = "";
     chakraOnClose();
   };
@@ -47,14 +47,14 @@ const Search = () => {
     <>
       <Tooltip
         hasArrow
-        label={"Search"}
-        placement='right'
+        label="Search"
+        placement="right"
         ml={1}
         openDelay={500}
         display={{ base: "block", md: "none" }}
       >
         <Flex
-          alignItems={"center"}
+          alignItems="center"
           gap={4}
           _hover={{ bg: "whiteAlpha.400" }}
           borderRadius={6}
@@ -68,31 +68,31 @@ const Search = () => {
         </Flex>
       </Tooltip>
 
-      <Modal isOpen={isOpen} onClose={handleClose} motionPreset='slideInLeft'>
+      <Modal isOpen={isOpen} onClose={handleClose} motionPreset="slideInLeft">
         <ModalOverlay />
-        <ModalContent bg={"black"} border={"1px solid gray"} maxW={"400px"}>
-          <ModalHeader>Search User </ModalHeader>
+        <ModalContent bg="black" border="1px solid gray" maxW="400px">
+          <ModalHeader>Search User</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <form onSubmit={handleSearchUser} autoComplete='off'>
+            <form onSubmit={handleSearchUser} autoComplete="off">
               <FormControl>
                 <FormLabel>Username:</FormLabel>
                 <Input
-                  placeholder='Frangi'
+                  placeholder="Frangi"
                   ref={searchRef}
-                  type='text'
-                  id='searchInput'
-                  autoComplete='off'
+                  type="text"
+                  id="searchInput"
+                  autoComplete="off"
                   autoFocus={true}
-                  autoCorrect='off'
-                  autoCapitalize='off'
+                  autoCorrect="off"
+                  autoCapitalize="off"
                 />
               </FormControl>
-              <Flex w={"full"} justifyContent={"flex-end"}>
+              <Flex w="full" justifyContent="flex-end">
                 <Button
-                  type='submit'
-                  ml={"auto"}
-                  size={"sm"}
+                  type="submit"
+                  ml="auto"
+                  size="sm"
                   my={4}
                   isLoading={isLoading}
                 >
@@ -100,10 +100,14 @@ const Search = () => {
                 </Button>
               </Flex>
             </form>
-            {user && (
-              <div onClick={handleClose}>
-                <SuggestedUser user={user} setUser={setUser} />
-              </div>
+            {users.length > 0 && (
+              <Box mt={4}>
+                {users.map((user) => (
+                  <div key={user.uid} onClick={handleClose}>
+                    <SuggestedUser user={user} setUser={setUsers} />
+                  </div>
+                ))}
+              </Box>
             )}
           </ModalBody>
         </ModalContent>

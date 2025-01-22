@@ -4,7 +4,7 @@ import FeedPosts from "../../Components/FeedPosts/FeedPosts";
 import SuggestedUsers from "../../Components/SuggestedUsers/SuggestedUsers";
 
 const HomePage = () => {
-  document.title = "Home 🎃";
+  document.title = "Home";
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -15,8 +15,8 @@ const HomePage = () => {
 
   if (loading) {
     return (
-      <Center height='100vh'>
-        <Spinner size='xl' />
+      <Center height="100vh">
+        <Spinner size="xl" />
       </Center>
     );
   }
@@ -32,12 +32,11 @@ const HomePage = () => {
           mr={20}
           display={{ base: "none", lg: "block" }}
           maxW={"300px"}
-          >
+        >
           <SuggestedUsers />
         </Box>
       </Flex>
     </Container>
-
   );
 };
 

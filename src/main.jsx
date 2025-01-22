@@ -4,7 +4,6 @@ import App from "./App.jsx";
 import "./index.css";
 import { mode } from "@chakra-ui/theme-tools";
 import { BrowserRouter } from "react-router-dom";
-import Snowfall from "react-snowfall";
 
 const config = {
   initialColorMode: "dark",
@@ -41,7 +40,6 @@ const theme = extendTheme({
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <ChakraProvider theme={theme}>
-      <Snowfall />
       <App />
     </ChakraProvider>
   </BrowserRouter>

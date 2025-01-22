@@ -1,41 +1,54 @@
 import { useState } from "react";
 import useShowToast from "./useShowToast";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  startAt,
+  endAt,
+} from "firebase/firestore";
 import { firestore } from "../firebase/firebaseConfig";
 
 const useSearchUser = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [users, setUsers] = useState([]);
   const showToast = useShowToast();
 
   const getUserProfile = async (username) => {
     setIsLoading(true);
-    setUser(null);
+    setUsers([]);
     try {
       const q = query(
         collection(firestore, "users"),
-        where("username", "==", username)
+        orderBy("username"),
+        startAt(username),
+        endAt(username + "\uf8ff") // This helps to fetch usernames starting with the input
       );
 
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        return showToast("Error", "User Not Found", "error");
+        return showToast("Error", "No users found", "error");
       }
 
+      const foundUsers = [];
       querySnapshot.forEach((doc) => {
-        setUser(doc.data());
+        foundUsers.push(doc.data());
       });
+
+      setUsers(foundUsers);
     } catch (error) {
-      showToast("error", error.message, "error");
-      setUser(null);
+      showToast("Error", error.message, "error");
+      setUsers([]);
     } finally {
       setIsLoading(false);
-      document.title = "Home 🎃";
+      document.title = "Home";
     }
   };
 
-  return { isLoading, getUserProfile, user, setUser };
+  return { isLoading, getUserProfile, users, setUsers };
 };
 
 export default useSearchUser;
