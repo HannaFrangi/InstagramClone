@@ -5,10 +5,12 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Spacer,
+  Spinner,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   CommentLogo,
   NotificationsLogo,
@@ -19,6 +21,33 @@ import useAuthStore from "../../store/authStore";
 import useLikePost from "../../hooks/useLikePost";
 import { timeAgo } from "../../utils/timeAgo";
 import CommentsModal from "../Modal/CommentModal";
+import useGetUserProfileById from "../../hooks/useGetUserProfileById";
+
+const CommentItem = ({ comment }) => {
+  const [shouldFetch, setShouldFetch] = useState(false);
+  const { userProfile: commentUser, isLoading: commentLoading } =
+    useGetUserProfileById(comment?.createdBy);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShouldFetch(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!shouldFetch || commentLoading) {
+    return <Spinner size="xs" />;
+  }
+
+  return (
+    <Text fontSize="sm">
+      <Text as="span" fontWeight="600" mr={1}>
+        {commentUser?.username}
+      </Text>
+      {comment.comment}
+    </Text>
+  );
+};
 
 const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
   const { isCommenting, handlePostComment } = usePostComment();
@@ -34,65 +63,68 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
   };
 
   return (
-    <Box mb={10} marginTop={"auto"}>
-      <Flex alignItems={"center"} gap={4} w={"full"} pt={0} mb={2} mt={4}>
-        <Box onClick={handleLikePost} cursor={"pointer"} fontSize={18}>
+    <Box mb={10} marginTop="auto">
+      <Flex alignItems="center" gap={4} w="full" pt={0} mb={2} mt={4}>
+        <Box onClick={handleLikePost} cursor="pointer" fontSize={18}>
           {!isLiked ? <NotificationsLogo /> : <UnlikeLogo />}
         </Box>
 
         <Box
-          cursor={"pointer"}
+          cursor="pointer"
           fontSize={18}
           onClick={() => commentRef.current.focus()}
         >
           <CommentLogo />
         </Box>
       </Flex>
-      <Text fontWeight={600} fontSize={"sm"}>
+      <Text fontWeight={600} fontSize="sm">
         {likes} likes
       </Text>
-
       {isProfilePage && (
-        <Text fontSize='12' color={"gray"}>
+        <Text fontSize="12" color="gray">
           Posted {timeAgo(post.createdAt)}
         </Text>
       )}
 
       {!isProfilePage && (
         <>
-          <Text fontSize='sm' fontWeight={700}>
-            {creatorProfile?.username}{" "}
-            <Text as='span' fontWeight={400}>
-              {post.caption}
+          <Text fontSize="sm" mb={2}>
+            <Text as="span" fontWeight="600" mr={1}>
+              {creatorProfile?.username}
             </Text>
+            {post.caption}
           </Text>
-          {post.comments.length > 0 && (
-            <Text
-              fontSize='sm'
-              color={"gray"}
-              cursor={"pointer"}
-              onClick={onOpen}
-            >
-              View all {post.comments.length} comments
-            </Text>
-          )}
-          {isOpen ? (
+          <Flex direction="column" gap={2} mt={-1}>
+            {post.comments.slice(0, 1).map((comment, index) => (
+              <CommentItem key={index} comment={comment} />
+            ))}
+            {post.comments.length > 1 && (
+              <Text
+                fontSize="sm"
+                color="gray.500"
+                cursor="pointer"
+                onClick={onOpen}
+              >
+                View all {post.comments.length} comments
+              </Text>
+            )}
+          </Flex>
+          {isOpen && (
             <CommentsModal isOpen={isOpen} onClose={onClose} post={post} />
-          ) : null}
+          )}
         </>
       )}
-
       {authUser && (
         <Flex
-          alignItems={"center"}
+          alignItems="center"
           gap={2}
-          justifyContent={"space-between"}
-          w={"full"}
+          justifyContent="space-between"
+          w="full"
         >
           <InputGroup>
             <Input
-              variant={"flushed"}
-              placeholder={"Add a comment..."}
+              variant="flushed"
+              placeholder="Add a comment..."
               fontSize={14}
               onChange={(e) => setComment(e.target.value)}
               value={comment}
@@ -101,11 +133,11 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
             <InputRightElement>
               <Button
                 fontSize={14}
-                color={"blue.500"}
+                color="blue.500"
                 fontWeight={600}
-                cursor={"pointer"}
+                cursor="pointer"
                 _hover={{ color: "white" }}
-                bg={"transparent"}
+                bg="transparent"
                 onClick={handleSubmitComment}
                 isLoading={isCommenting}
               >
