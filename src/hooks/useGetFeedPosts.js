@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
-import usePostStore from "../store/postStore";
-import useAuthStore from "../store/authStore";
-import useShowToast from "./useShowToast";
-import useUserProfileStore from "../store/userProfileStore";
-import { firestore } from "../firebase/firebaseConfig";
+import { useEffect, useState } from 'react';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import usePostStore from '../store/postStore';
+import useAuthStore from '../store/authStore';
+import useShowToast from './useShowToast';
+import useUserProfileStore from '../store/userProfileStore';
+import { firestore } from '../firebase/firebaseConfig';
 
 const useGetFeedPosts = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -21,9 +21,9 @@ const useGetFeedPosts = () => {
     if (!authUser.Following || authUser.Following.length === 0) {
       setIsLoading(false);
       showToast(
-        "Warning",
-        "You are not following anyone. Follow someone to see posts!",
-        "warning"
+        'Warning',
+        'You are not following anyone. Follow someone to see posts!',
+        'warning'
       );
       setPosts([]);
       return;
@@ -31,8 +31,8 @@ const useGetFeedPosts = () => {
 
     // Query posts created by followed users
     const q = query(
-      collection(firestore, "posts")
-      // where("createdBy", "in", authUser.Following)
+      collection(firestore, 'posts')
+      // where('createdBy', 'in', authUser.Following)
     );
 
     // Real-time listener for posts collection
@@ -40,7 +40,7 @@ const useGetFeedPosts = () => {
       q,
       (snapshot) => {
         if (snapshot.empty) {
-          console.log("No posts found.");
+          console.log('No posts found.');
           setPosts([]);
           setIsLoading(false);
           return;
@@ -59,7 +59,7 @@ const useGetFeedPosts = () => {
       },
       (err) => {
         setError(err.message);
-        showToast("Error", err.message, "error");
+        showToast('Error', err.message, 'error');
         setIsLoading(false);
       }
     );

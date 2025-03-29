@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { firestore } from "../firebase/firebaseConfig";
+import { useState, useEffect } from 'react';
+import { firestore } from '../firebase/firebaseConfig';
 import {
   onSnapshot,
   collection,
@@ -8,9 +8,9 @@ import {
   doc,
   updateDoc,
   deleteDoc,
-} from "firebase/firestore";
-import useAuthStore from "../store/authStore";
-import useShowToast from "./useShowToast";
+} from 'firebase/firestore';
+import useAuthStore from '../store/authStore';
+import useShowToast from './useShowToast';
 
 const useNotifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -22,23 +22,28 @@ const useNotifications = () => {
     if (!authUser) return;
 
     const q = query(
-      collection(firestore, "notifications"),
-      where("receiverId", "==", authUser.uid)
+      collection(firestore, 'notifications'),
+      where('receiverId', '==', authUser.uid)
     );
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const fetchedNotifications = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const fetchedNotifications = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter(
+            (notification) => notification.senderId !== notification.receiverId
+          );
+
         setNotifications(fetchedNotifications);
         setLoading(false);
       },
       (error) => {
-        console.error("Error fetching notifications: ", error);
-        showToast("Error", "Failed to fetch notifications", "error");
+        console.error('Error fetching notifications: ', error);
+        showToast('Error', 'Failed to fetch notifications', 'error');
         setLoading(false);
       }
     );
@@ -48,22 +53,22 @@ const useNotifications = () => {
 
   const markAsRead = async (notificationId) => {
     try {
-      const notifRef = doc(firestore, "notifications", notificationId);
+      const notifRef = doc(firestore, 'notifications', notificationId);
       await updateDoc(notifRef, { isRead: true });
-      showToast("Success", "Notification marked as read", "success");
+      showToast('Success', 'Notification marked as read', 'success');
     } catch (error) {
-      console.error("Error marking notification as read: ", error);
-      showToast("Error", "Failed to mark notification as read", "error");
+      console.error('Error marking notification as read: ', error);
+      showToast('Error', 'Failed to mark notification as read', 'error');
     }
   };
 
   const deleteNotification = async (notificationId) => {
     try {
-      await deleteDoc(doc(firestore, "notifications", notificationId));
+      await deleteDoc(doc(firestore, 'notifications', notificationId));
       setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
     } catch (error) {
-      console.error("Error deleting notification: ", error);
-      showToast("error", error.message, "error");
+      console.error('Error deleting notification: ', error);
+      showToast('error', error.message, 'error');
     }
   };
 
