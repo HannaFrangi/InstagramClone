@@ -1,21 +1,21 @@
-import { Box, Link, Tooltip } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { AiFillHome } from "react-icons/ai";
 import { Link as RouterLink } from "react-router-dom";
+import { AppTooltip } from "../AppTooltip.jsx";
 
 const Home = () => {
   return (
-    <Tooltip
-      hasArrow
+    <AppTooltip
       label={"Home"}
-      placement='right'
+      placement="right"
       ml={1}
       openDelay={500}
       display={{ base: "block", md: "none" }}
     >
-      <Link
+      <Box
+        as={RouterLink}
         display={"flex"}
         to={"/"}
-        as={RouterLink}
         alignItems={"center"}
         gap={4}
         _hover={{ bg: "whiteAlpha.400" }}
@@ -26,8 +26,8 @@ const Home = () => {
       >
         <AiFillHome size={25} />
         <Box display={{ base: "none", md: "block" }}>Home</Box>
-      </Link>
-    </Tooltip>
+      </Box>
+    </AppTooltip>
   );
 };
 

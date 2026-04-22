@@ -1,21 +1,21 @@
-import { Avatar, Box, Link, Tooltip, Skeleton } from "@chakra-ui/react";
+import { Avatar, Box, Skeleton, SkeletonCircle } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import useAuthStore from "../../store/authStore";
 import { MagicalText } from "react-halloween";
+import { AppTooltip } from "../AppTooltip.jsx";
 
 const ProfileLink = () => {
   const authUser = useAuthStore((state) => state.user);
 
   return (
-    <Tooltip
-      hasArrow
+    <AppTooltip
       label={"Profile"}
       placement="right"
       ml={1}
       openDelay={500}
       display={{ base: "block", md: "none" }}
     >
-      <Link
+      <Box
         display={"flex"}
         to={authUser ? `/${authUser.username}` : "#"}
         as={RouterLink}
@@ -29,18 +29,17 @@ const ProfileLink = () => {
       >
         {authUser ? (
           <>
-            <Avatar
-              size={"sm"}
-              src={authUser.profilePicURL || ""}
-              name={authUser.username}
-            />
+            <Avatar.Root size={"sm"}>
+              <Avatar.Image src={authUser.profilePicURL || ""} />
+              <Avatar.Fallback name={authUser.username} />
+            </Avatar.Root>
             <Box display={{ base: "none", md: "block" }}>
               <MagicalText text={authUser.username} />
             </Box>
           </>
         ) : (
           <>
-            <Skeleton circle size="40px" />
+            <SkeletonCircle size="40px" />
             <Skeleton
               height="20px"
               width="100px"
@@ -48,8 +47,8 @@ const ProfileLink = () => {
             />
           </>
         )}
-      </Link>
-    </Tooltip>
+      </Box>
+    </AppTooltip>
   );
 };
 

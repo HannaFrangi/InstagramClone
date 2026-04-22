@@ -7,26 +7,29 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebaseConfig";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
 import { Box, Spinner } from "@chakra-ui/react";
+import { AppToaster } from "./lib/toaster.jsx";
 
 function App() {
   const [authUser, loading] = useAuthState(auth);
 
   if (loading) {
-    <Box
-      height={"100vh"}
-      borderRight={"1px solid"}
-      borderColor={"whiteAlpha.300"}
-      py={8}
-      position={"sticky"}
-      top={0}
-      left={0}
-      px={{ base: 2, md: 4 }}
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Spinner color="white" />
-    </Box>;
+    return (
+      <Box
+        height={"100vh"}
+        borderRight={"1px solid"}
+        borderColor={"whiteAlpha.300"}
+        py={8}
+        position={"sticky"}
+        top={0}
+        left={0}
+        px={{ base: 2, md: 4 }}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Spinner color="white" />
+      </Box>
+    );
   }
 
   return (
@@ -46,6 +49,7 @@ function App() {
           element={authUser ? <ProfilePage /> : <Navigate to="/auth" />}
         />
       </Routes>
+      <AppToaster />
     </PageLayout>
   );
 }

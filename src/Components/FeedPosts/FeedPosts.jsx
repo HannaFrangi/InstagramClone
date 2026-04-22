@@ -48,7 +48,7 @@ const FeedPosts = () => {
             No posts WTf
           </Text>
           <Text color={"red.400"}>Go Follow Someone 🙁</Text>
-          <Button onClick={refresh} colorScheme="blue" mt={4}>
+          <Button onClick={refresh} colorPalette="blue" mt={4}>
             Refresh Feed
           </Button>
         </>

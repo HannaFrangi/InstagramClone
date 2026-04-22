@@ -10,7 +10,10 @@ const Comment = ({ comment }) => {
   return (
     <Flex gap={4}>
       <Link to={`/${userProfile.username.toLowerCase()}`}>
-        <Avatar src={userProfile.profilePicURL} size={"sm"} />
+        <Avatar.Root size={"sm"}>
+          <Avatar.Image src={userProfile.profilePicURL} />
+          <Avatar.Fallback name={userProfile.username} />
+        </Avatar.Root>
       </Link>
       <Flex direction={"column"}>
         <Flex gap={2} alignItems={"center"}>

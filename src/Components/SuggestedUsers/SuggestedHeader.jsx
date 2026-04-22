@@ -12,14 +12,13 @@ const SuggestedHeader = () => {
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"} w={"full"}>
       <Flex alignItems={"center"} gap={2}>
-        <Link to={`${authUser.username}`}>
-          <Avatar
-            size={"lg"}
-            src={authUser.profilePicURL}
-            name={authUser.username}
-          />
+        <Link to={`/${authUser.username}`}>
+          <Avatar.Root size={"lg"}>
+            <Avatar.Image src={authUser.profilePicURL} />
+            <Avatar.Fallback name={authUser.username} />
+          </Avatar.Root>
         </Link>
-        <Link to={`${authUser.username}`}>
+        <Link to={`/${authUser.username}`}>
           <Text fontSize={12} fontWeight={"bold"}>
             {authUser.username}
           </Text>
@@ -33,7 +32,7 @@ const SuggestedHeader = () => {
         fontWeight={"medium"}
         color={"blue.400"}
         onClick={handleLogout}
-        isLoading={isLoggingOut}
+        loading={isLoggingOut}
         cursor={"pointer"}
       >
         Log out

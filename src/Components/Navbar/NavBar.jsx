@@ -19,7 +19,7 @@ const Navbar = () => {
         />
         <Flex gap={4}>
           <Link to='/auth'>
-            <Button colorScheme={"blue"} size={"sm"}>
+            <Button colorPalette={"blue"} size={"sm"}>
               Login
             </Button>
           </Link>

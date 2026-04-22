@@ -1,27 +1,22 @@
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Tooltip,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Field, Input, useDisclosure } from "@chakra-ui/react";
 import { SearchLogo } from "../../Assets/Contents";
 import { useRef } from "react";
 import SuggestedUser from "../SuggestedUsers/SuggestedUser";
 import useSearchUser from "../../hooks/useSearchUser";
 import useShowToast from "../../hooks/useShowToast";
+import {
+  AppDialogRoot,
+  AppDialogBackdrop,
+  AppDialogPositioner,
+  AppDialogContent,
+  AppDialogCloseTrigger,
+  AppDialogHeader,
+  AppDialogBody,
+} from "../AppDialog.jsx";
+import { AppTooltip } from "../AppTooltip.jsx";
 
 const Search = () => {
-  const { isOpen, onOpen, onClose: chakraOnClose } = useDisclosure();
+  const { open, onOpen, onClose: chakraOnClose } = useDisclosure();
   const { users, isLoading, getUserProfile, setUsers } = useSearchUser();
   const searchRef = useRef(null);
   const showToast = useShowToast();
@@ -45,8 +40,7 @@ const Search = () => {
 
   return (
     <>
-      <Tooltip
-        hasArrow
+      <AppTooltip
         label="Search"
         placement="right"
         ml={1}
@@ -66,52 +60,54 @@ const Search = () => {
           <SearchLogo />
           <Box display={{ base: "none", md: "block" }}>Search</Box>
         </Flex>
-      </Tooltip>
+      </AppTooltip>
 
-      <Modal isOpen={isOpen} onClose={handleClose} motionPreset="slideInLeft">
-        <ModalOverlay />
-        <ModalContent bg="black" border="1px solid gray" maxW="400px">
-          <ModalHeader>Search User</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <form onSubmit={handleSearchUser} autoComplete="off">
-              <FormControl>
-                <FormLabel>Username:</FormLabel>
-                <Input
-                  placeholder="Frangi"
-                  ref={searchRef}
-                  type="text"
-                  id="searchInput"
-                  autoComplete="off"
-                  autoFocus={true}
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                />
-              </FormControl>
-              <Flex w="full" justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  ml="auto"
-                  size="sm"
-                  my={4}
-                  isLoading={isLoading}
-                >
-                  Search
-                </Button>
-              </Flex>
-            </form>
-            {users.length > 0 && (
-              <Box mt={4}>
-                {users.map((user) => (
-                  <div key={user.uid} onClick={handleClose}>
-                    <SuggestedUser user={user} setUser={setUsers} />
-                  </div>
-                ))}
-              </Box>
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <AppDialogRoot isOpen={open} onClose={handleClose}>
+        <AppDialogBackdrop />
+        <AppDialogPositioner>
+          <AppDialogContent bg="black" border="1px solid gray" maxW="400px">
+            <AppDialogHeader>Search User</AppDialogHeader>
+            <AppDialogCloseTrigger />
+            <AppDialogBody pb={6}>
+              <form onSubmit={handleSearchUser} autoComplete="off">
+                <Field.Root>
+                  <Field.Label>Username:</Field.Label>
+                  <Input
+                    placeholder="Frangi"
+                    ref={searchRef}
+                    type="text"
+                    id="searchInput"
+                    autoComplete="off"
+                    autoFocus={true}
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                  />
+                </Field.Root>
+                <Flex w="full" justifyContent="flex-end">
+                  <Button
+                    type="submit"
+                    ml="auto"
+                    size="sm"
+                    my={4}
+                    loading={isLoading}
+                  >
+                    Search
+                  </Button>
+                </Flex>
+              </form>
+              {users.length > 0 && (
+                <Box mt={4}>
+                  {users.map((user) => (
+                    <div key={user.uid} onClick={handleClose}>
+                      <SuggestedUser user={user} setUser={setUsers} />
+                    </div>
+                  ))}
+                </Box>
+              )}
+            </AppDialogBody>
+          </AppDialogContent>
+        </AppDialogPositioner>
+      </AppDialogRoot>
     </>
   );
 };

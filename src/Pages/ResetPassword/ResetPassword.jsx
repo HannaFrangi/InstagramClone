@@ -3,8 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
-  FormControl,
-  FormLabel,
+  Field,
   Input,
   VStack,
   Flex,
@@ -57,9 +56,9 @@ const ResetPassword = () => {
         <Heading as='h2' size='lg' mb={4} textAlign='center'>
           Reset Your Password
         </Heading>
-        <VStack spacing={4} as='form' onSubmit={handleResetPassword}>
-          <FormControl>
-            <FormLabel>New Password:</FormLabel>
+        <VStack gap={4} as='form' onSubmit={handleResetPassword}>
+          <Field.Root>
+            <Field.Label>New Password:</Field.Label>
             <Input
               placeholder='New Password'
               fontSize={14}
@@ -69,12 +68,12 @@ const ResetPassword = () => {
               onChange={(e) => setNewPassword(e.target.value)}
               required
             />
-          </FormControl>
+          </Field.Root>
           <Button
-            colorScheme='blue'
+            colorPalette='blue'
             size='sm'
             fontSize={14}
-            isLoading={loading}
+            loading={loading}
             type='submit'
           >
             Reset Password

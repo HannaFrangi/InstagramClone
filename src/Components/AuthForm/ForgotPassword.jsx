@@ -39,7 +39,7 @@ const ForgotPassword = ({ onClose }) => {
 
   return (
     <Box>
-      <VStack spacing={4}>
+      <VStack gap={4}>
         <Input
           placeholder='Enter your email'
           fontSize={14}
@@ -51,10 +51,10 @@ const ForgotPassword = ({ onClose }) => {
         />
         <Button
           w={"full"}
-          colorScheme='blue'
+          colorPalette='blue'
           size={"sm"}
           fontSize={14}
-          isLoading={loading}
+          loading={loading}
           onClick={handleResetPassword}
         >
           Send Reset Email

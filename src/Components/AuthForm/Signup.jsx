@@ -1,11 +1,9 @@
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 import {
   Alert,
-  AlertIcon,
   Button,
   Input,
   InputGroup,
-  InputRightElement,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import useSignUpWithEmailNPass from "../../hooks/useSignUpWithEmailNPass";
@@ -45,7 +43,17 @@ const Signup = () => {
         onChange={(e) => setInputs({ ...inputs, fullName: e.target.value })}
         size={"sm"}
       />
-      <InputGroup>
+      <InputGroup
+        endElement={
+          <Button
+            variant={"ghost"}
+            size={"sm"}
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <LuEyeOff /> : <LuEye />}
+          </Button>
+        }
+      >
         <Input
           placeholder='Password'
           fontSize={14}
@@ -54,29 +62,20 @@ const Signup = () => {
           onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
           size={"sm"}
         />
-        <InputRightElement h={"full"}>
-          <Button
-            variant={"ghost"}
-            size={"sm"}
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-          </Button>
-        </InputRightElement>
       </InputGroup>
       {error && (
-        <Alert status='error' fontSize={13} p={2} borderRadius={4}>
-          <AlertIcon fontSize={12} />
-          {error.message}
-        </Alert>
+        <Alert.Root status='error' fontSize={13} p={2} borderRadius={4}>
+          <Alert.Indicator fontSize={12} />
+          <Alert.Description>{error.message}</Alert.Description>
+        </Alert.Root>
       )}
       <Button
         w={"full"}
-        colorScheme='blue'
+        colorPalette='blue'
         size={"sm"}
         fontSize={14}
         onClick={() => signup(inputs)}
-        isLoading={loading}
+        loading={loading}
       >
         Sign Up
       </Button>

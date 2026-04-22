@@ -1,16 +1,6 @@
 import { useState, useEffect } from "react";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
   Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Text,
   Flex,
   VStack,
@@ -18,42 +8,52 @@ import {
   Avatar,
   Button,
   Center,
-  Spinner, // Add Spinner component from Chakra UI
+  Spinner,
 } from "@chakra-ui/react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
 import useGetUserProfilesByIds from "../../hooks/useGetUsersProfilesByIds";
 import useFollowUser from "../../hooks/useFollowUser";
+import {
+  AppDialogRoot,
+  AppDialogBackdrop,
+  AppDialogPositioner,
+  AppDialogContent,
+  AppDialogCloseTrigger,
+  AppDialogHeader,
+  AppDialogBody,
+} from "../AppDialog.jsx";
 
 const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
   const { username } = useParams();
-  const [tabIndex, setTabIndex] = useState(activeTab === "followers" ? 0 : 1);
+  const [tab, setTab] = useState(
+    activeTab === "followers" ? "followers" : "following"
+  );
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [followerIds, setFollowerIds] = useState([]);
   const [followingIds, setFollowingIds] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // State to track loading
+  const [listLoading, setListLoading] = useState(true);
 
   const { userProfile } = useGetUserProfileByUsername(username);
 
   useEffect(() => {
-    setTabIndex(activeTab === "followers" ? 0 : 1);
+    setTab(activeTab === "followers" ? "followers" : "following");
   }, [activeTab]);
 
-  // Set timeout to fetch data when modal opens
   useEffect(() => {
     let timeoutId;
     if (isOpen) {
-      setIsLoading(true); // Set loading to true when modal opens
+      setListLoading(true);
       timeoutId = setTimeout(() => {
         if (userProfile) {
           setFollowerIds(userProfile.Followers);
           setFollowingIds(userProfile.Following);
         }
-      }, 1000); // 1-second delay
+      }, 1000);
     }
 
-    return () => clearTimeout(timeoutId); // Clear timeout on cleanup
+    return () => clearTimeout(timeoutId);
   }, [isOpen, userProfile]);
 
   const { userProfiles: followersProfiles } =
@@ -64,14 +64,14 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
   useEffect(() => {
     if (followersProfiles) {
       setFollowers(followersProfiles);
-      setIsLoading(false); // Set loading to false when followers are loaded
+      setListLoading(false);
     }
   }, [followersProfiles]);
 
   useEffect(() => {
     if (followingProfiles) {
       setFollowing(followingProfiles);
-      setIsLoading(false); // Set loading to false when following users are loaded
+      setListLoading(false);
     }
   }, [followingProfiles]);
 
@@ -88,26 +88,30 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size="lg">
-      <ModalOverlay />
-      <ModalContent bg={"black"} border={"1px solid gray"} maxW={"500px"}>
-        <ModalHeader>{`${userProfile?.username}'s Connections`}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Tabs
-            isFitted
-            variant="soft-rounded"
-            colorScheme="purple"
-            index={tabIndex}
-            onChange={(index) => setTabIndex(index)}
-          >
-            <TabList mb="1em">
-              <Tab color={"white"}>Followers</Tab>
-              <Tab color={"white"}>Following</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                {isLoading ? ( // Display Spinner while loading followers
+    <AppDialogRoot isOpen={isOpen} onClose={handleClose} size="lg">
+      <AppDialogBackdrop />
+      <AppDialogPositioner>
+        <AppDialogContent bg="black" border="1px solid gray" maxW="500px">
+          <AppDialogCloseTrigger />
+          <AppDialogHeader>{`${userProfile?.username}'s Connections`}</AppDialogHeader>
+          <AppDialogBody>
+            <Tabs.Root
+              value={tab}
+              onValueChange={(e) => setTab(e.value)}
+              variant="enclosed"
+              colorPalette="purple"
+              fitted
+            >
+              <Tabs.List mb="1em">
+                <Tabs.Trigger value="followers" color="white">
+                  Followers
+                </Tabs.Trigger>
+                <Tabs.Trigger value="following" color="white">
+                  Following
+                </Tabs.Trigger>
+              </Tabs.List>
+              <Tabs.Content value="followers">
+                {listLoading ? (
                   <Center>
                     <Spinner size="lg" />
                   </Center>
@@ -119,27 +123,30 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                   followers.map((follower) => (
                     <div style={{ marginTop: "20px" }} key={follower.uid}>
                       <Flex
-                        justifyContent={"space-between"}
-                        alignItems={"center"}
-                        w={"full"}
+                        justifyContent="space-between"
+                        alignItems="center"
+                        w="full"
                       >
-                        <Flex alignItems={"center"} gap={2}>
+                        <Flex alignItems="center" gap={2}>
                           <Link
                             to={`/${follower.username}`}
                             onClick={handleClose}
                           >
-                            <Avatar src={follower.profilePicURL} size={"md"} />
+                            <Avatar.Root size="md">
+                              <Avatar.Image src={follower.profilePicURL} />
+                              <Avatar.Fallback name={follower.fullName} />
+                            </Avatar.Root>
                           </Link>
-                          <VStack spacing={2} alignItems={"flex-start"}>
+                          <VStack gap={2} alignItems="flex-start">
                             <Link
                               to={`/${follower.username}`}
                               onClick={handleClose}
                             >
-                              <Box fontSize={12} fontWeight={"bold"}>
+                              <Box fontSize={12} fontWeight="bold">
                                 {follower.fullName}
                               </Box>
                             </Link>
-                            <Box fontSize={11} color={"gray.500"}>
+                            <Box fontSize={11} color="gray.500">
                               {follower.Followers.length} followers
                             </Box>
                           </VStack>
@@ -148,9 +155,9 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                     </div>
                   ))
                 )}
-              </TabPanel>
-              <TabPanel>
-                {isLoading ? (
+              </Tabs.Content>
+              <Tabs.Content value="following">
+                {listLoading ? (
                   <Center>
                     <Spinner size="lg" />
                   </Center>
@@ -162,46 +169,45 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                   following.map((followingUser) => (
                     <Box style={{ marginTop: "20px" }} key={followingUser.uid}>
                       <Flex
-                        justifyContent={"space-between"}
-                        alignItems={"center"}
-                        w={"full"}
+                        justifyContent="space-between"
+                        alignItems="center"
+                        w="full"
                       >
-                        <Flex alignItems={"center"} gap={2}>
+                        <Flex alignItems="center" gap={2}>
                           <Link
                             to={`/${followingUser.username}`}
                             onClick={handleClose}
                           >
-                            <Avatar
-                              src={followingUser.profilePicURL}
-                              size={"md"}
-                            />
+                            <Avatar.Root size="md">
+                              <Avatar.Image src={followingUser.profilePicURL} />
+                              <Avatar.Fallback name={followingUser.fullName} />
+                            </Avatar.Root>
                           </Link>
-                          <VStack spacing={2} alignItems={"flex-start"}>
+                          <VStack gap={2} alignItems="flex-start">
                             <Link
                               to={`/${followingUser.username}`}
                               onClick={handleClose}
                             >
-                              <Box fontSize={12} fontWeight={"bold"}>
+                              <Box fontSize={12} fontWeight="bold">
                                 {followingUser.fullName}
                               </Box>
                             </Link>
-                            <Box fontSize={11} color={"gray.500"}>
+                            <Box fontSize={11} color="gray.500">
                               {followingUser.Followers.length} followers
                             </Box>
                           </VStack>
                         </Flex>
-                        <FollowUnfollowButton userId={followingUser.uid} />{" "}
-                        {/* Use uid */}
+                        <FollowUnfollowButton userId={followingUser.uid} />
                       </Flex>
                     </Box>
                   ))
                 )}
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+              </Tabs.Content>
+            </Tabs.Root>
+          </AppDialogBody>
+        </AppDialogContent>
+      </AppDialogPositioner>
+    </AppDialogRoot>
   );
 };
 
@@ -211,15 +217,15 @@ const FollowUnfollowButton = ({ userId }) => {
   return (
     <Button
       fontSize={13}
-      bg={"transparent"}
+      bg="transparent"
       p={0}
-      h={"max-content"}
-      fontWeight={"medium"}
+      h="max-content"
+      fontWeight="medium"
       color={isFollowing ? "red.400" : "blue.400"}
-      cursor={"pointer"}
+      cursor="pointer"
       _hover={{ color: "white" }}
       onClick={handleFollowUser}
-      isLoading={isUpdating}
+      loading={isUpdating}
     >
       {isFollowing ? "Unfollow" : "Follow"}
     </Button>

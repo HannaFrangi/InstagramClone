@@ -28,12 +28,13 @@ const PostHeader = ({ post, creatorProfile }) => {
       <Flex alignItems={"center"} gap={2}>
         {creatorProfile ? (
           <Link to={`/${creatorProfile.username}`}>
-            <Avatar
-              src={creatorProfile.profilePicURL}
-              alt={creatorProfile.username}
-              name={creatorProfile.username}
-              size={"sm"}
-            />
+            <Avatar.Root size={"sm"}>
+              <Avatar.Image
+                src={creatorProfile.profilePicURL}
+                alt={creatorProfile.username}
+              />
+              <Avatar.Fallback name={creatorProfile.username} />
+            </Avatar.Root>
           </Link>
         ) : (
           <SkeletonCircle size="10" />
@@ -66,7 +67,7 @@ const PostHeader = ({ post, creatorProfile }) => {
             }}
             transition={"0.2s ease-in-out"}
             onClick={handleFollowUser}
-            isLoading={isUpdating}
+            loading={isUpdating}
           >
             {isFollowing ? "Unfollow" : "Follow"}
           </Button>

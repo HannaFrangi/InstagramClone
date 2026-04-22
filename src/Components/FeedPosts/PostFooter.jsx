@@ -4,7 +4,6 @@ import {
   Flex,
   Input,
   InputGroup,
-  InputRightElement,
   Spinner,
   Text,
   useDisclosure,
@@ -54,7 +53,7 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
   const authUser = useAuthStore((state) => state.user);
   const commentRef = useRef(null);
   const { handleLikePost, isLiked, likes } = useLikePost(post, authUser);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
 
   const handleSubmitComment = async () => {
     await handlePostComment(post.id, comment);
@@ -108,8 +107,8 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
               </Text>
             )}
           </Flex>
-          {isOpen && (
-            <CommentsModal isOpen={isOpen} onClose={onClose} post={post} />
+          {open && (
+            <CommentsModal isOpen={open} onClose={onClose} post={post} />
           )}
         </>
       )}
@@ -120,16 +119,8 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
           justifyContent="space-between"
           w="full"
         >
-          <InputGroup>
-            <Input
-              variant="flushed"
-              placeholder="Add a comment..."
-              fontSize={14}
-              onChange={(e) => setComment(e.target.value)}
-              value={comment}
-              ref={commentRef}
-            />
-            <InputRightElement>
+          <InputGroup
+            endElement={
               <Button
                 fontSize={14}
                 color="blue.500"
@@ -138,11 +129,20 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
                 _hover={{ color: "white" }}
                 bg="transparent"
                 onClick={handleSubmitComment}
-                isLoading={isCommenting}
+                loading={isCommenting}
               >
                 Post
               </Button>
-            </InputRightElement>
+            }
+          >
+            <Input
+              variant="flushed"
+              placeholder="Add a comment..."
+              fontSize={14}
+              onChange={(e) => setComment(e.target.value)}
+              value={comment}
+              ref={commentRef}
+            />
           </InputGroup>
         </Flex>
       )}

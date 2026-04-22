@@ -1,5 +1,6 @@
-import { Box, Button, Flex, Link, Tooltip, Spinner } from "@chakra-ui/react";
+import { Box, Button, Flex, Spinner } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
+import { AppTooltip } from "../AppTooltip.jsx";
 import { InstagramLogo, InstagramMobileLogo } from "../../Assets/Contents";
 import { BiLogOut } from "react-icons/bi";
 import useLogout from "../../hooks/useLogOut";
@@ -54,9 +55,9 @@ const Sidebar = () => {
       overflow="hidden"
     >
       <Flex direction={"column"} gap={10} w="full" height={"full"} zIndex={1}>
-        <Link
-          to={"/"}
+        <Box
           as={RouterLink}
+          to={"/"}
           pl={2}
           display={{ base: "none", md: "block" }}
           cursor="pointer"
@@ -68,12 +69,12 @@ const Sidebar = () => {
           >
             <InstagramLogo />
           </motion.div>
-        </Link>
+        </Box>
 
         {/* Mobile logo */}
-        <Link
-          to={"/"}
+        <Box
           as={RouterLink}
+          to={"/"}
           p={2}
           display={{ base: "block", md: "none" }}
           borderRadius={6}
@@ -84,21 +85,20 @@ const Sidebar = () => {
           cursor="pointer"
         >
           <InstagramMobileLogo />
-        </Link>
+        </Box>
 
         <Flex direction={"column"} gap={5} cursor={"pointer"}>
           <SidebarItems />
         </Flex>
 
         {/* LOGOUT */}
-        <Tooltip
-          hasArrow
+        <AppTooltip
           label={"Logout"}
           placement="right"
           ml={1}
           openDelay={500}
-          color="black"
           display={{ base: "block", md: "none" }}
+          contentProps={{ color: "black" }}
         >
           <Flex
             onClick={handleLogout}
@@ -117,12 +117,12 @@ const Sidebar = () => {
               display={{ base: "none", md: "block" }}
               variant={"ghost"}
               _hover={{ bg: "transparent" }}
-              isLoading={isLoggingOut}
+              loading={isLoggingOut}
             >
               Logout
             </Button>
           </Flex>
-        </Tooltip>
+        </AppTooltip>
       </Flex>
     </Box>
   );

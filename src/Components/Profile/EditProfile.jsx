@@ -3,16 +3,9 @@ import {
   Button,
   Center,
   Flex,
-  FormControl,
-  FormLabel,
+  Field,
   Heading,
   Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Stack,
 } from '@chakra-ui/react';
 import { useRef, useState, useEffect } from 'react';
@@ -22,6 +15,15 @@ import useEditProfile from '../../hooks/useEditProfile';
 import useShowToast from '../../hooks/useShowToast';
 import { query, collection, where, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebase/firebaseConfig';
+import {
+  AppDialogRoot,
+  AppDialogBackdrop,
+  AppDialogPositioner,
+  AppDialogContent,
+  AppDialogCloseTrigger,
+  AppDialogHeader,
+  AppDialogBody,
+} from '../AppDialog.jsx';
 
 const EditProfile = ({ isOpen, onClose }) => {
   const [inputs, setInputs] = useState({
@@ -122,117 +124,123 @@ const EditProfile = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent
-          bg={'black'}
-          boxShadow={'xl'}
-          border={'1px solid gray'}
-          mx={3}>
-          <ModalHeader />
-          <ModalCloseButton />
-          <ModalBody>
-            {/* Container Flex */}
-            <Flex bg={'black'}>
-              <Stack
-                spacing={4}
-                w={'full'}
-                maxW={'md'}
-                bg={'black'}
-                p={6}
-                my={0}>
-                <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
-                  Edit Profile
-                </Heading>
-                <FormControl>
-                  <Stack direction={['column', 'row']} spacing={6}>
-                    <Center>
-                      <Avatar
-                        size='xl'
-                        src={selectedFile || authUser.profilePicURL}
-                        border={'2px solid white '}
-                        name={authUser.username}
+      <AppDialogRoot isOpen={isOpen} onClose={onClose}>
+        <AppDialogBackdrop />
+        <AppDialogPositioner>
+          <AppDialogContent
+            bg={'black'}
+            boxShadow={'xl'}
+            border={'1px solid gray'}
+            mx={3}
+          >
+            <AppDialogHeader />
+            <AppDialogCloseTrigger />
+            <AppDialogBody>
+              <Flex bg={'black'}>
+                <Stack
+                  gap={4}
+                  w={'full'}
+                  maxW={'md'}
+                  bg={'black'}
+                  p={6}
+                  my={0}
+                >
+                  <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
+                    Edit Profile
+                  </Heading>
+                  <Field.Root>
+                    <Stack direction={['column', 'row']} gap={6}>
+                      <Center>
+                        <Avatar.Root size='xl' border={'2px solid white '}>
+                          <Avatar.Image
+                            src={selectedFile || authUser.profilePicURL}
+                            alt={authUser.username}
+                          />
+                          <Avatar.Fallback name={authUser.username} />
+                        </Avatar.Root>
+                      </Center>
+                      <Center w='full'>
+                        <Button w='full' onClick={() => fileRef.current.click()}>
+                          Edit Profile Picture
+                        </Button>
+                      </Center>
+                      <Input
+                        type='file'
+                        hidden
+                        ref={fileRef}
+                        onChange={handleImageChange}
                       />
-                    </Center>
-                    <Center w='full'>
-                      <Button w='full' onClick={() => fileRef.current.click()}>
-                        Edit Profile Picture
-                      </Button>
-                    </Center>
+                    </Stack>
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label fontSize={'sm'}>Full Name </Field.Label>
                     <Input
-                      type='file'
-                      hidden
-                      ref={fileRef}
-                      onChange={handleImageChange}
+                      placeholder={'Full Name'}
+                      size={'sm'}
+                      type={'text'}
+                      value={inputs.fullName}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, fullName: e.target.value })
+                      }
                     />
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label fontSize={'sm'}>Username</Field.Label>
+                    <Input
+                      placeholder={'Username'}
+                      size={'sm'}
+                      type={'text'}
+                      value={inputs.username}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, username: e.target.value })
+                      }
+                    />
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label fontSize={'sm'}>Bio</Field.Label>
+                    <Input
+                      placeholder={'Bio'}
+                      size={'sm'}
+                      type={'text'}
+                      value={inputs.bio}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, bio: e.target.value })
+                      }
+                    />
+                  </Field.Root>
+
+                  <Stack gap={6} direction={['column', 'row']}>
+                    <Button
+                      bg={'red.400'}
+                      color={'white'}
+                      w='full'
+                      size='sm'
+                      _hover={{ bg: 'red.500' }}
+                      onClick={onClose}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      bg={'blue.400'}
+                      color={'white'}
+                      size='sm'
+                      w='full'
+                      _hover={{ bg: 'blue.500' }}
+                      onClick={handleEditProfile}
+                      loading={isUpdating}
+                    >
+                      Submit
+                    </Button>
                   </Stack>
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel fontSize={'sm'}>Full Name </FormLabel>
-                  <Input
-                    placeholder={'Full Name'}
-                    size={'sm'}
-                    type={'text'}
-                    value={inputs.fullName}
-                    onChange={(e) =>
-                      setInputs({ ...inputs, fullName: e.target.value })
-                    }
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel fontSize={'sm'}>Username</FormLabel>
-                  <Input
-                    placeholder={'Username'}
-                    size={'sm'}
-                    type={'text'}
-                    value={inputs.username}
-                    onChange={(e) =>
-                      setInputs({ ...inputs, username: e.target.value })
-                    }
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel fontSize={'sm'}>Bio</FormLabel>
-                  <Input
-                    placeholder={'Bio'}
-                    size={'sm'}
-                    type={'text'}
-                    value={inputs.bio}
-                    onChange={(e) =>
-                      setInputs({ ...inputs, bio: e.target.value })
-                    }
-                  />
-                </FormControl>
-
-                <Stack spacing={6} direction={['column', 'row']}>
-                  <Button
-                    bg={'red.400'}
-                    color={'white'}
-                    w='full'
-                    size='sm'
-                    _hover={{ bg: 'red.500' }}
-                    onClick={onClose}>
-                    Cancel
-                  </Button>
-                  <Button
-                    bg={'blue.400'}
-                    color={'white'}
-                    size='sm'
-                    w='full'
-                    _hover={{ bg: 'blue.500' }}
-                    onClick={handleEditProfile}
-                    isLoading={isUpdating}>
-                    Submit
-                  </Button>
                 </Stack>
-              </Stack>
-            </Flex>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+              </Flex>
+            </AppDialogBody>
+          </AppDialogContent>
+        </AppDialogPositioner>
+      </AppDialogRoot>
     </>
   );
 };

@@ -5,17 +5,20 @@ import {
   Flex,
   Image,
   Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Textarea,
-  Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
+import {
+  AppDialogRoot,
+  AppDialogBackdrop,
+  AppDialogPositioner,
+  AppDialogContent,
+  AppDialogCloseTrigger,
+  AppDialogHeader,
+  AppDialogBody,
+  AppDialogFooter,
+} from "../AppDialog.jsx";
+import { AppTooltip } from "../AppTooltip.jsx";
 import { CreatePostLogo } from "../../Assets/Contents";
 import { BsFillImageFill } from "react-icons/bs";
 import { useRef, useState } from "react";
@@ -36,7 +39,7 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
 
 const CreatePost = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const [caption, setCaption] = useState("");
   const imageRef = useRef(null);
   const { handleImageChange, selectedFile, setSelectedFile } = usePreviewImg();
@@ -55,8 +58,7 @@ const CreatePost = () => {
 
   return (
     <>
-      <Tooltip
-        hasArrow
+      <AppTooltip
         label={"Create"}
         placement="right"
         ml={1}
@@ -76,14 +78,15 @@ const CreatePost = () => {
           <CreatePostLogo />
           <Box display={{ base: "none", md: "block" }}>Create</Box>
         </Flex>
-      </Tooltip>
+      </AppTooltip>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent bg={"black"} border={"1px solid gray"}>
-          <ModalHeader>Create Post</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
+      <AppDialogRoot isOpen={open} onClose={onClose} size="xl">
+        <AppDialogBackdrop />
+        <AppDialogPositioner>
+          <AppDialogContent bg={"black"} border={"1px solid gray"}>
+            <AppDialogHeader>Create Post</AppDialogHeader>
+            <AppDialogCloseTrigger />
+            <AppDialogBody pb={6}>
             <Textarea
               placeholder="Post caption..."
               value={caption}
@@ -124,15 +127,16 @@ const CreatePost = () => {
                 />
               </Flex>
             )}
-          </ModalBody>
+            </AppDialogBody>
 
-          <ModalFooter>
-            <Button mr={3} onClick={handlePostCreation} isLoading={isLoading}>
-              Post
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <AppDialogFooter>
+              <Button mr={3} onClick={handlePostCreation} loading={isLoading}>
+                Post
+              </Button>
+            </AppDialogFooter>
+          </AppDialogContent>
+        </AppDialogPositioner>
+      </AppDialogRoot>
     </>
   );
 };

@@ -30,7 +30,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const { isLoading, userProfile } = useGetUserProfileByUsername(username);
   const location = useLocation();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const [activeTab, setActiveTab] = useState("followers");
 
   const handleOpenFollowersModal = (tab) => {
@@ -87,12 +87,12 @@ const ProfilePage = () => {
         borderColor="whiteAlpha.300"
         direction="column"
       >
-        <ProfileTabs userProfile={userProfile} isLoading={isLoading} />
-        <ProfilePosts userProfile={userProfile} isLoading={isLoading} />
+        <ProfileTabs userProfile={userProfile} loading={isLoading} />
+        <ProfilePosts userProfile={userProfile} loading={isLoading} />
       </Flex>
 
       <FollowersAndFollowingModal
-        isOpen={isOpen}
+        isOpen={open}
         onClose={onClose}
         activeTab={activeTab}
         userProfile={userProfile}
@@ -164,7 +164,7 @@ const UserNotFound = () => {
             fontSize="lg"
           >
             <Button
-              colorScheme="teal"
+              colorPalette="teal"
               size={buttonSize}
               _hover={{ bg: "teal.600", transform: "translateY(-2px)" }}
               transition="0.3s ease"

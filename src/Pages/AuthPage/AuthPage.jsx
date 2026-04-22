@@ -12,7 +12,7 @@ const AuthPage = () => {
             <Image src='/auth.png' h={650} alt='auth' />
           </Box>
           {/* Right Section */}
-          <VStack spacing={4} align='stretch'>
+          <VStack gap={4} align='stretch'>
             <AuthForm />
             {/* <Box textAlign={"center"}>Get the App</Box>
             <Flex gap={5} justifyContent={"center"}>

@@ -1,27 +1,19 @@
 import {
+  Avatar,
   Box,
   Flex,
-  Tooltip,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Button,
-  Avatar,
   Text,
   VStack,
-  Divider,
+  Separator,
   Image,
   Spinner,
   Center,
 } from "@chakra-ui/react";
 import { NotificationsLogo } from "../../Assets/Contents";
-import useNotifications from "../../hooks/useNotification"; // Adjust the path as necessary
-import useGetUserProfileById from "../../hooks/useGetUserProfileById"; // Adjust the path as necessary
+import useNotifications from "../../hooks/useNotification";
+import useGetUserProfileById from "../../hooks/useGetUserProfileById";
 import { MdDelete, MdDeleteOutline } from "react-icons/md";
 import useGetPostByid from "../../hooks/useGetPostByid";
 
@@ -47,16 +39,24 @@ import {
 import { firestore, storage } from "../../firebase/firebaseConfig";
 import usePostStore from "../../store/postStore";
 import { Link } from "react-router-dom";
+import {
+  AppDialogRoot,
+  AppDialogBackdrop,
+  AppDialogPositioner,
+  AppDialogContent,
+  AppDialogCloseTrigger,
+  AppDialogHeader,
+  AppDialogBody,
+} from "../AppDialog.jsx";
+import { AppTooltip } from "../AppTooltip.jsx";
 
 const Notifications = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const { notifications, loading, deleteNotification } = useNotifications();
 
   return (
     <>
-      {/* Tooltip and Trigger for Notifications */}
-      <Tooltip
-        hasArrow
+      <AppTooltip
         label={"Notifications"}
         placement="right"
         ml={1}
@@ -76,40 +76,40 @@ const Notifications = () => {
           <NotificationsLogo />
           <Box display={{ base: "none", md: "block" }}>Notifications</Box>
         </Flex>
-      </Tooltip>
+      </AppTooltip>
 
-      {/* Modal for Notifications */}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent bg={"black"} border={"1px solid gray"} maxW={"400px"}>
-          <ModalHeader>Notifications</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {loading ? (
-              <Center height={"100vh"}>
-                <Spinner color="white" />
-              </Center>
-            ) : (
-              <Box>
-                {notifications.length === 0 ? (
-                  <Box>No notifications yet🤷‍♂️</Box>
-                ) : (
-                  notifications.map((notification) => (
-                    <NotificationItem
-                      key={notification.id}
-                      notification={notification}
-                      onDelete={deleteNotification}
-                      onOpen={onOpen}
-                      onClose={onClose}
-                    />
-                  ))
-                )}
-              </Box>
-            )}
-          </ModalBody>
-          <ModalFooter></ModalFooter>
-        </ModalContent>
-      </Modal>
+      <AppDialogRoot isOpen={open} onClose={onClose}>
+        <AppDialogBackdrop />
+        <AppDialogPositioner>
+          <AppDialogContent bg={"black"} border={"1px solid gray"} maxW={"400px"}>
+            <AppDialogHeader>Notifications</AppDialogHeader>
+            <AppDialogCloseTrigger />
+            <AppDialogBody>
+              {loading ? (
+                <Center height={"100vh"}>
+                  <Spinner color="white" />
+                </Center>
+              ) : (
+                <Box>
+                  {notifications.length === 0 ? (
+                    <Box>No notifications yet🤷‍♂️</Box>
+                  ) : (
+                    notifications.map((notification) => (
+                      <NotificationItem
+                        key={notification.id}
+                        notification={notification}
+                        onDelete={deleteNotification}
+                        onOpen={onOpen}
+                        onClose={onClose}
+                      />
+                    ))
+                  )}
+                </Box>
+              )}
+            </AppDialogBody>
+          </AppDialogContent>
+        </AppDialogPositioner>
+      </AppDialogRoot>
     </>
   );
 };
@@ -166,8 +166,8 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
 
       const batch = writeBatch(firestore);
 
-      notificationsSnapshot.forEach((doc) => {
-        batch.delete(doc.ref);
+      notificationsSnapshot.forEach((docSnap) => {
+        batch.delete(docSnap.ref);
       });
 
       await batch.commit();
@@ -202,12 +202,12 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
         ) : (
           <Flex alignItems="center" gap={2} w="full">
             <Link to={`/${userProfile?.username}`}>
-              <Avatar
-                name={userProfile?.fullName}
-                src={userProfile?.profilePicURL}
-                onClick={onClose}
-                cursor={"pointer"}
-              />
+              <Box onClick={onClose} cursor={"pointer"}>
+                <Avatar.Root>
+                  <Avatar.Image src={userProfile?.profilePicURL} />
+                  <Avatar.Fallback name={userProfile?.fullName} />
+                </Avatar.Root>
+              </Box>
             </Link>
             <Text onClick={onClose} cursor={"pointer"}>
               <strong>{userProfile?.fullName}</strong> liked{" "}
@@ -224,7 +224,7 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
             <Button
               variant="ghost"
               onClick={handleDelete}
-              colorScheme="red"
+              colorPalette="red"
               size="sm"
               aria-label="Delete notification"
               ml="auto"
@@ -235,91 +235,88 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
         )}
       </Flex>
 
-      {/* Post Modal */}
       {openPostModal && post && userProfile && (
-        <Modal
-          isOpen={onOpen}
-          onClose={onClose}
-          isCentered={true}
-          size={{ base: "3xl", md: "5xl" }}
+        <AppDialogRoot
+          isOpen={openPostModal}
+          onClose={() => setOpenPostModal(false)}
+          size="5xl"
         >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalCloseButton />
-            <ModalBody bg={"black"} pb={5}>
-              <Flex
-                gap="4"
-                w={{ base: "90%", sm: "70%", md: "full" }}
-                mx={"auto"}
-                maxH={"90vh"}
-                minH={"50vh"}
-              >
+          <AppDialogBackdrop />
+          <AppDialogPositioner>
+            <AppDialogContent>
+              <AppDialogCloseTrigger />
+              <AppDialogBody bg={"black"} pb={5}>
                 <Flex
-                  borderRadius={4}
-                  overflow={"hidden"}
-                  border={"1px solid"}
-                  borderColor={"whiteAlpha.300"}
-                  flex={1.5}
-                  justifyContent={"center"}
-                  alignItems={"center"}
+                  gap="4"
+                  w={{ base: "90%", sm: "70%", md: "full" }}
+                  mx={"auto"}
+                  maxH={"90vh"}
+                  minH={"50vh"}
                 >
-                  <Image src={post.imageURL} alt="profile post" />
-                </Flex>
-                <Flex
-                  flex={1}
-                  flexDir={"column"}
-                  px={10}
-                  display={{ base: "none", md: "flex" }}
-                >
-                  <Flex alignItems={"center"} justifyContent={"space-between"}>
-                    <Flex alignItems={"center"} gap={4}>
-                      <Avatar
-                        src={postOwner.profilePicURL}
-                        size={"sm"}
-                        name={postOwner.username}
-                      />
-                      <Text fontWeight={"bold"} fontSize={12}>
-                        {postOwner.username}
-                      </Text>
-                    </Flex>
-
-                    {authUser?.uid === postOwner.uid && (
-                      <Button
-                        size={"sm"}
-                        bg={"transparent"}
-                        _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
-                        borderRadius={4}
-                        p={1}
-                        onClick={handleDeletePost}
-                        isLoading={isDeleting}
-                      >
-                        <MdDelete size={20} cursor="pointer" />
-                      </Button>
-                    )}
-                  </Flex>
-                  <Divider my={4} bg={"gray.500"} />
-
-                  <VStack
-                    w="full"
-                    alignItems={"start"}
-                    maxH={"350px"}
-                    overflowY={"auto"}
+                  <Flex
+                    borderRadius={4}
+                    overflow={"hidden"}
+                    border={"1px solid"}
+                    borderColor={"whiteAlpha.300"}
+                    flex={1.5}
+                    justifyContent={"center"}
+                    alignItems={"center"}
                   >
-                    {/* CAPTION */}
-                    {post.caption && <Caption post={post} key={post.id} />}
-                    {/* COMMENTS */}
-                    {post.comments.map((comment) => (
-                      <Comment key={comment.id} comment={comment} />
-                    ))}
-                  </VStack>
-                  <Divider my={4} bg={"gray.8000"} />
+                    <Image src={post.imageURL} alt="profile post" />
+                  </Flex>
+                  <Flex
+                    flex={1}
+                    flexDir={"column"}
+                    px={10}
+                    display={{ base: "none", md: "flex" }}
+                  >
+                    <Flex alignItems={"center"} justifyContent={"space-between"}>
+                      <Flex alignItems={"center"} gap={4}>
+                        <Avatar.Root size={"sm"}>
+                          <Avatar.Image src={postOwner.profilePicURL} />
+                          <Avatar.Fallback name={postOwner.username} />
+                        </Avatar.Root>
+                        <Text fontWeight={"bold"} fontSize={12}>
+                          {postOwner.username}
+                        </Text>
+                      </Flex>
 
-                  <PostFooter isProfilePage={true} post={post} />
+                      {authUser?.uid === postOwner.uid && (
+                        <Button
+                          size={"sm"}
+                          bg={"transparent"}
+                          _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
+                          borderRadius={4}
+                          p={1}
+                          onClick={handleDeletePost}
+                          loading={isDeleting}
+                        >
+                          <MdDelete size={20} cursor="pointer" />
+                        </Button>
+                      )}
+                    </Flex>
+                    <Separator my={4} borderColor={"gray.500"} />
+
+                    <VStack
+                      w="full"
+                      alignItems={"start"}
+                      maxH={"350px"}
+                      overflowY={"auto"}
+                    >
+                      {post.caption && <Caption post={post} key={post.id} />}
+                      {post.comments.map((comment) => (
+                        <Comment key={comment.id} comment={comment} />
+                      ))}
+                    </VStack>
+                    <Separator my={4} borderColor={"gray.800"} />
+
+                    <PostFooter isProfilePage={true} post={post} />
+                  </Flex>
                 </Flex>
-              </Flex>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+              </AppDialogBody>
+            </AppDialogContent>
+          </AppDialogPositioner>
+        </AppDialogRoot>
       )}
     </>
   );

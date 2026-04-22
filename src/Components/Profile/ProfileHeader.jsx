@@ -13,7 +13,7 @@ import useFollowUser from "../../hooks/useFollowUser";
 
 const ProfileHeader = ({ onOpenFollowersModal, userProfile }) => {
   const authUser = useAuthStore((state) => state.user);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const { isFollowing, isUpdating, handleFollowUser } = useFollowUser(
     userProfile?.uid
   );
@@ -38,11 +38,10 @@ const ProfileHeader = ({ onOpenFollowersModal, userProfile }) => {
         alignSelf={"flex-start"}
         mx={"auto"}
       >
-        <Avatar
-          src={userProfile.profilePicURL}
-          name={userProfile.username}
-          alt={userProfile.username}
-        />
+        <Avatar.Root>
+          <Avatar.Image src={userProfile.profilePicURL} alt={userProfile.username} />
+          <Avatar.Fallback name={userProfile.username} />
+        </Avatar.Root>
       </AvatarGroup>
 
       <VStack alignItems={"start"} gap={2} mx={"auto"} flex={1}>
@@ -77,7 +76,7 @@ const ProfileHeader = ({ onOpenFollowersModal, userProfile }) => {
                 _hover={{ bg: "blue.600" }}
                 size={{ base: "xs", md: "sm" }}
                 onClick={handleFollowUser}
-                isLoading={isUpdating}
+                loading={isUpdating}
               >
                 {isFollowing ? "Unfollow" : "Follow"}
               </Button>
@@ -120,7 +119,7 @@ const ProfileHeader = ({ onOpenFollowersModal, userProfile }) => {
         </Flex>
         <Text fontSize={"sm"}>{userProfile.bio}</Text>
       </VStack>
-      {isOpen && <EditProfile isOpen={isOpen} onClose={onClose} />}
+      {open && <EditProfile isOpen={open} onClose={onClose} />}
     </Flex>
   );
 };
