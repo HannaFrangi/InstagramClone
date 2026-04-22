@@ -1,5 +1,5 @@
 import { Box, Container, Flex, Spinner, Center } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import FeedPosts from "../../Components/FeedPosts/FeedPosts";
 import SuggestedUsers from "../../Components/SuggestedUsers/SuggestedUsers";
 

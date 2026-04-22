@@ -7,7 +7,6 @@ import {
   SkeletonCircle,
   Text,
   VStack,
-  Image,
 } from "@chakra-ui/react";
 import FeedPost from "./FeedPost";
 import useGetFeedPosts from "../../hooks/useGetFeedPosts";

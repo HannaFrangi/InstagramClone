@@ -1,12 +1,11 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
   FormControl,
   FormLabel,
   Input,
-  Text,
   VStack,
   Flex,
   Heading,

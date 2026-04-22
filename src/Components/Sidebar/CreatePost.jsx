@@ -22,7 +22,6 @@ import { useRef, useState } from "react";
 import usePreviewImg from "../../hooks/usePreviewImage";
 import useShowToast from "../../hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
-import usePostStore from "../../store/postStore";
 import useUserProfileStore from "../../store/userProfileStore";
 import { useLocation } from "react-router-dom";
 import {
@@ -141,12 +140,10 @@ const CreatePost = () => {
 export default CreatePost;
 
 function useCreatePost() {
-  const pathname = useLocation();
-  if (pathname == "/auth") return;
+  const { pathname } = useLocation();
   const authUser = useAuthStore((state) => state.user);
   const showToast = useShowToast();
   const [isLoading, setIsLoading] = useState(false);
-  const createPost = usePostStore((state) => state.createPost);
   const addPost = useUserProfileStore((state) => state.addPost);
   const { userProfile } = useGetUserProfileByUsername(authUser?.username);
 
@@ -159,8 +156,13 @@ function useCreatePost() {
   // }, [userProfile]);
 
   const handleCreatePost = async (selectedFile, caption) => {
+    if (pathname === "/auth") return;
     if (isLoading) return;
     if (!selectedFile) throw new Error("Please select an image");
+    if (!authUser) {
+      showToast("Error", "You must be logged in", "error");
+      return;
+    }
     setIsLoading(true);
     const newPost = {
       caption: caption,
@@ -190,7 +192,7 @@ function useCreatePost() {
       //   console.error("User profile uid does not match.");
       // }
 
-      if (pathname !== "/" && userProfile.uid === authUser.uid) {
+      if (pathname !== "/" && userProfile?.uid === authUser.uid) {
         addPost({ ...newPost, id: postDocRef.id });
       }
 

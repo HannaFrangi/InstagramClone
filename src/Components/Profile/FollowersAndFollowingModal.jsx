@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -91,7 +91,7 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
     <Modal isOpen={isOpen} onClose={handleClose} size="lg">
       <ModalOverlay />
       <ModalContent bg={"black"} border={"1px solid gray"} maxW={"500px"}>
-        <ModalHeader>{userProfile?.username}'s Connections</ModalHeader>
+        <ModalHeader>{`${userProfile?.username}'s Connections`}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Tabs

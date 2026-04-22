@@ -45,7 +45,6 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { firestore, storage } from "../../firebase/firebaseConfig";
-import useGetFeedPosts from "../../hooks/useGetFeedPosts";
 import usePostStore from "../../store/postStore";
 import { Link } from "react-router-dom";
 
@@ -185,7 +184,6 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
       setIsDeleting(false);
     }
   };
-  const { onClose: chakraOnClose } = useDisclosure();
 
   return (
     <>

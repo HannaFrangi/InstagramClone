@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { useCallback, useEffect, useState } from 'react';
+import { collection, query, onSnapshot } from 'firebase/firestore';
 import usePostStore from '../store/postStore';
 import useAuthStore from '../store/authStore';
 import useShowToast from './useShowToast';
-import useUserProfileStore from '../store/userProfileStore';
 import { firestore } from '../firebase/firebaseConfig';
 
 const useGetFeedPosts = () => {
@@ -12,9 +11,12 @@ const useGetFeedPosts = () => {
   const { posts, setPosts } = usePostStore();
   const authUser = useAuthStore((state) => state.user);
   const showToast = useShowToast();
-  const { setUserProfile } = useUserProfileStore();
 
-  const getFeedPosts = () => {
+  const getFeedPosts = useCallback(() => {
+    if (!authUser) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     setError(null); // Reset error on each fetch attempt
 
@@ -65,7 +67,7 @@ const useGetFeedPosts = () => {
     );
 
     return unsubscribe;
-  };
+  }, [authUser, setPosts, showToast]);
 
   useEffect(() => {
     if (!authUser) return;
@@ -73,7 +75,7 @@ const useGetFeedPosts = () => {
     const unsubscribe = getFeedPosts();
 
     return () => unsubscribe && unsubscribe();
-  }, [authUser, setPosts, showToast]);
+  }, [authUser, getFeedPosts]);
 
   const refresh = () => {
     setIsLoading(true);

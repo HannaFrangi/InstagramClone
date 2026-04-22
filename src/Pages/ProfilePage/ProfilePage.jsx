@@ -29,7 +29,7 @@ const ProfilePage = () => {
   const { username } = useParams();
   const navigate = useNavigate();
   const { isLoading, userProfile } = useGetUserProfileByUsername(username);
-  const pathname = useLocation();
+  const location = useLocation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [activeTab, setActiveTab] = useState("followers");
 
@@ -37,8 +37,6 @@ const ProfilePage = () => {
     setActiveTab(tab);
     onOpen();
   };
-
-  if (pathname == "/auth") return;
 
   useEffect(() => {
     const lowerCaseUsername = username.toLowerCase();
@@ -55,6 +53,10 @@ const ProfilePage = () => {
       document.title = "User Not Found";
     }
   }, [userProfile]);
+
+  if (location.pathname === "/auth") {
+    return null;
+  }
 
   const userNotFound = !isLoading && !userProfile;
   if (userNotFound) return <UserNotFound />;

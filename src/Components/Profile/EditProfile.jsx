@@ -111,20 +111,6 @@ const EditProfile = ({ isOpen, onClose }) => {
         return;
       }
     }
-    if (inputs.fullName !== authUser.fullName) {
-      const isFullNameTaken = await checkFullNameAvailability(inputs.fullName);
-      if (isFullNameTaken) {
-        showToast('Error', 'Full Name is already taken', 'error');
-        return;
-      }
-    }
-    if (inputs.bio !== authUser.bio) {
-      const isBioTaken = await checkBioAvailability(inputs.bio);
-      if (isBioTaken) {
-        showToast('Error', 'Bio is already taken', 'error');
-        return;
-      }
-    }
     try {
       await editProfile(inputs, selectedFile);
       setSelectedFile(null);

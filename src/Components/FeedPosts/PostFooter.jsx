@@ -5,7 +5,6 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Spacer,
   Spinner,
   Text,
   useDisclosure,
