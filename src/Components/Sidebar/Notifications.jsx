@@ -149,8 +149,9 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
 
     setIsDeleting(true);
     try {
-      const imageRef = ref(storage, `posts/${notification.postId}`);
-      await deleteObject(imageRef);
+      if (post?.imageURL) {
+        await deleteObject(ref(storage, `posts/${notification.postId}`));
+      }
       const userRef = doc(firestore, "users", authUser.uid);
       await deleteDoc(doc(firestore, "posts", notification.postId));
 
@@ -256,7 +257,13 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
                     flex={1.5}
                     justifyContent={'center'}
                     alignItems={'center'}>
-                    <Image src={post.imageURL} alt='profile post' />
+                    {post.imageURL ? (
+                  <Image src={post.imageURL} alt='profile post' />
+                ) : (
+                  <Text p={6} fontSize={'lg'} whiteSpace={'pre-wrap'} wordBreak={'break-word'}>
+                    {post.caption}
+                  </Text>
+                )}
                   </Flex>
                   <Flex
                     flex={1}

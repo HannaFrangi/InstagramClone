@@ -86,12 +86,14 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
 
       {!isProfilePage && (
         <>
-          <Text fontSize="sm" mb={2}>
-            <Text as="span" fontWeight="600" mr={1}>
-              {creatorProfile?.username}
+          {post.imageURL && post.caption && (
+            <Text fontSize="sm" mb={2}>
+              <Text as="span" fontWeight="600" mr={1}>
+                {creatorProfile?.username}
+              </Text>
+              {post.caption}
             </Text>
-            {post.caption}
-          </Text>
+          )}
           <Flex direction="column" gap={2} mt={-1}>
             {post.comments.slice(0, 1).map((comment, index) => (
               <CommentItem key={index} comment={comment} />

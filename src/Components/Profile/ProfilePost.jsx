@@ -57,8 +57,9 @@ const ProfilePost = ({ post }) => {
 
     setIsDeleting(true);
     try {
-      const imageRef = ref(storage, `posts/${post.id}`);
-      await deleteObject(imageRef);
+      if (post.imageURL) {
+        await deleteObject(ref(storage, `posts/${post.id}`));
+      }
       const userRef = doc(firestore, "users", authUser.uid);
       await deleteDoc(doc(firestore, "posts", post.id));
 
@@ -131,13 +132,21 @@ const ProfilePost = ({ post }) => {
           </Flex>
         </Flex>
 
-        <Image
-          src={post.imageURL}
-          alt={`${userProfile.username}'s Post`}
-          w={'100%'}
-          h={'100%'}
-          objectFit={'cover'}
-        />
+        {post.imageURL ? (
+          <Image
+            src={post.imageURL}
+            alt={`${userProfile.username}'s Post`}
+            w={'100%'}
+            h={'100%'}
+            objectFit={'cover'}
+          />
+        ) : (
+          <Flex w={'100%'} h={'100%'} p={4} alignItems={'center'} justifyContent={'center'}>
+            <Text fontSize={'sm'} textAlign={'center'} lineClamp={6} wordBreak={'break-word'}>
+              {post.caption}
+            </Text>
+          </Flex>
+        )}
       </GridItem>
 
       <AppDialogRoot isOpen={open} onClose={onClose} size='5xl'>
@@ -160,7 +169,13 @@ const ProfilePost = ({ post }) => {
                   flex={1.5}
                   justifyContent={'center'}
                   alignItems={'center'}>
+                  {post.imageURL ? (
                   <Image src={post.imageURL} alt='profile post' />
+                ) : (
+                  <Text p={6} fontSize={'lg'} whiteSpace={'pre-wrap'} wordBreak={'break-word'}>
+                    {post.caption}
+                  </Text>
+                )}
                 </Flex>
                 <Flex
                   flex={1}

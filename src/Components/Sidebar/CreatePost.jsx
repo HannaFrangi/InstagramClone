@@ -38,6 +38,8 @@ import { firestore, storage } from "../../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
 
+const MAX_POST_LENGTH = 280;
+
 const CreatePost = () => {
   const { open, onOpen, onClose } = useDisclosure();
   const [caption, setCaption] = useState("");
@@ -88,10 +90,21 @@ const CreatePost = () => {
             <AppDialogCloseTrigger />
             <AppDialogBody pb={6}>
             <Textarea
-              placeholder="Post caption..."
+              placeholder="What's happening?"
               value={caption}
+              maxLength={MAX_POST_LENGTH}
               onChange={(e) => setCaption(e.target.value)}
             />
+            <Box
+              textAlign={"right"}
+              fontSize={12}
+              mt={1}
+              color={
+                caption.length >= MAX_POST_LENGTH ? "red.400" : "gray.500"
+              }
+            >
+              {caption.length}/{MAX_POST_LENGTH}
+            </Box>
 
             <Input
               type="file"
@@ -130,7 +143,12 @@ const CreatePost = () => {
             </AppDialogBody>
 
             <AppDialogFooter>
-              <Button mr={3} onClick={handlePostCreation} loading={isLoading}>
+              <Button
+                mr={3}
+                onClick={handlePostCreation}
+                loading={isLoading}
+                disabled={!caption.trim() && !selectedFile}
+              >
                 Post
               </Button>
             </AppDialogFooter>
@@ -162,14 +180,15 @@ function useCreatePost() {
   const handleCreatePost = async (selectedFile, caption) => {
     if (pathname === "/auth") return;
     if (isLoading) return;
-    if (!selectedFile) throw new Error("Please select an image");
+    if (!caption.trim() && !selectedFile)
+      throw new Error("Write something or add an image");
     if (!authUser) {
       showToast("Error", "You must be logged in", "error");
       return;
     }
     setIsLoading(true);
     const newPost = {
-      caption: caption,
+      caption: caption.trim(),
       likes: [],
       comments: [],
       createdAt: Date.now(),
@@ -179,15 +198,18 @@ function useCreatePost() {
     try {
       const postDocRef = await addDoc(collection(firestore, "posts"), newPost);
       const userDocRef = doc(firestore, "users", authUser.uid);
-      const imageRef = ref(storage, `posts/${postDocRef.id}`);
 
       await updateDoc(userDocRef, { posts: arrayUnion(postDocRef.id) });
-      await uploadString(imageRef, selectedFile, "data_url");
-      const downloadURL = await getDownloadURL(imageRef);
 
-      await updateDoc(postDocRef, { imageURL: downloadURL });
+      if (selectedFile) {
+        const imageRef = ref(storage, `posts/${postDocRef.id}`);
+        await uploadString(imageRef, selectedFile, "data_url");
+        const downloadURL = await getDownloadURL(imageRef);
 
-      newPost.imageURL = downloadURL;
+        await updateDoc(postDocRef, { imageURL: downloadURL });
+
+        newPost.imageURL = downloadURL;
+      }
 
       // if (userProfile.uid === authUser.uid) {
       //   createPost({ ...newPost, id: postDocRef.id });
