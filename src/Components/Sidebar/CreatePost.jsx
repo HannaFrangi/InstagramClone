@@ -37,6 +37,8 @@ import {
 import { firestore, storage } from "../../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
+import { extractHashtags } from "../../utils/postText";
+import { notifyMentions } from "../../utils/notifications";
 
 const MAX_POST_LENGTH = 280;
 
@@ -189,8 +191,10 @@ function useCreatePost() {
     setIsLoading(true);
     const newPost = {
       caption: caption.trim(),
+      hashtags: extractHashtags(caption),
       likes: [],
       comments: [],
+      reposts: [],
       createdAt: Date.now(),
       createdBy: authUser.uid,
     };
@@ -217,6 +221,13 @@ function useCreatePost() {
       // } else {
       //   console.error("User profile uid does not match.");
       // }
+
+      // The post is saved either way; a failed notification is not fatal
+      notifyMentions({
+        text: newPost.caption,
+        senderId: authUser.uid,
+        postId: postDocRef.id,
+      }).catch(console.error);
 
       if (pathname !== "/" && userProfile?.uid === authUser.uid) {
         addPost({ ...newPost, id: postDocRef.id });

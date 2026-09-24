@@ -1,41 +1,9 @@
-import {
-  arrayRemove,
-  arrayUnion,
-  doc,
-  updateDoc,
-  collection,
-  addDoc,
-} from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
 import { firestore } from "../firebase/firebaseConfig";
 import { useState } from "react";
-
-// Function to create a notification, takes showToast as an argument
-const createNotification = async (
-  receiverId,
-  senderId,
-  type,
-  postId,
-  showToast
-) => {
-  try {
-    const notificationRef = collection(firestore, "notifications");
-
-    await addDoc(notificationRef, {
-      receiverId,
-      senderId,
-      type,
-      postId,
-      isRead: false,
-      createdAt: new Date(),
-    });
-    // showToast("Success", "Notification created!", "success");
-  } catch (error) {
-    console.error("Error creating notification: ", error);
-    showToast("Error", error.message, "error");
-  }
-};
+import { createNotification } from "../utils/notifications";
 
 const useLikePost = (post) => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -66,13 +34,12 @@ const useLikePost = (post) => {
 
       // Create notification only when a post is liked
       if (!isLiked) {
-        await createNotification(
-          post.createdBy,
-          authUser.uid,
-          "like",
-          post.id,
-          showToast
-        );
+        await createNotification({
+          receiverId: post.createdBy,
+          senderId: authUser.uid,
+          type: "like",
+          postId: post.id,
+        }).catch((error) => console.error("Error creating notification: ", error));
       }
 
       // Update local state

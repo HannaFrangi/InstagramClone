@@ -17,7 +17,7 @@ const useGetPostByid = () => {
       if (!postDoc.exists()) {
         showToast("Error", "Post not found", "error");
       } else {
-        setPost(postDoc.data());
+        setPost({ id: postDoc.id, ...postDoc.data() });
       }
     } catch (error) {
       console.log(error.message);

@@ -32,6 +32,7 @@ const ProfilePage = () => {
   const location = useLocation();
   const { open, onOpen, onClose } = useDisclosure();
   const [activeTab, setActiveTab] = useState("followers");
+  const [postsView, setPostsView] = useState("posts");
 
   const handleOpenFollowersModal = (tab) => {
     setActiveTab(tab);
@@ -87,8 +88,8 @@ const ProfilePage = () => {
         borderColor="whiteAlpha.300"
         direction="column"
       >
-        <ProfileTabs userProfile={userProfile} loading={isLoading} />
-        <ProfilePosts userProfile={userProfile} loading={isLoading} />
+        <ProfileTabs view={postsView} onChange={setPostsView} />
+        <ProfilePosts view={postsView} />
       </Flex>
 
       {open && (

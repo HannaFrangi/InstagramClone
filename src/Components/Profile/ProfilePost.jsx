@@ -17,21 +17,8 @@ import PostFooter from "../FeedPosts/PostFooter";
 import useUserProfileStore from "../../store/userProfileStore";
 import useAuthStore from "../../store/authStore";
 import useShowToast from "../../hooks/useShowToast";
-import { useState } from "react";
-import { deleteObject, ref } from "firebase/storage";
-import { firestore, storage } from "../../firebase/firebaseConfig";
-import {
-  arrayRemove,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-  writeBatch,
-} from "firebase/firestore";
-import usePostStore from "../../store/postStore";
+import useDeletePost from "../../hooks/useDeletePost";
+import PostModalMedia from "../FeedPosts/PostModalMedia";
 import Caption from "../Comment/Caption";
 import {
   AppDialogRoot,
@@ -46,49 +33,12 @@ const ProfilePost = ({ post }) => {
   const { open, onOpen, onClose } = useDisclosure();
   const userProfile = useUserProfileStore((state) => state.userProfile);
   const authUser = useAuthStore((state) => state.user);
+  const { isDeleting, deletePost } = useDeletePost();
   const showToast = useShowToast();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const deletePost = usePostStore((state) => state.deletePost);
-  const decrementPostsCount = useUserProfileStore((state) => state.deletePost);
 
   const handleDeletePost = async () => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
-    if (isDeleting) return;
-
-    setIsDeleting(true);
-    try {
-      if (post.imageURL) {
-        await deleteObject(ref(storage, `posts/${post.id}`));
-      }
-      const userRef = doc(firestore, "users", authUser.uid);
-      await deleteDoc(doc(firestore, "posts", post.id));
-
-      await updateDoc(userRef, {
-        posts: arrayRemove(post.id),
-      });
-
-      const notificationsQuery = query(
-        collection(firestore, "notifications"),
-        where("postId", "==", post.id)
-      );
-
-      const notificationsSnapshot = await getDocs(notificationsQuery);
-
-      const batch = writeBatch(firestore);
-
-      notificationsSnapshot.forEach((docSnap) => {
-        batch.delete(docSnap.ref);
-      });
-
-      await batch.commit();
-
-      deletePost(post.id);
-      decrementPostsCount(post.id);
+    if (await deletePost(post)) {
       showToast("Success", "Post deleted successfully", "success");
-    } catch (error) {
-      showToast("Error", error.message, "error");
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -169,13 +119,7 @@ const ProfilePost = ({ post }) => {
                   flex={1.5}
                   justifyContent={'center'}
                   alignItems={'center'}>
-                  {post.imageURL ? (
-                  <Image src={post.imageURL} alt='profile post' />
-                ) : (
-                  <Text p={6} fontSize={'lg'} whiteSpace={'pre-wrap'} wordBreak={'break-word'}>
-                    {post.caption}
-                  </Text>
-                )}
+                  <PostModalMedia post={post} />
                 </Flex>
                 <Flex
                   flex={1}

@@ -11,6 +11,7 @@ const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const AuthPage = lazy(() => import("./Pages/AuthPage/AuthPage"));
 const ProfilePage = lazy(() => import("./Pages/ProfilePage/ProfilePage"));
 const ResetPassword = lazy(() => import("./Pages/ResetPassword/ResetPassword"));
+const HashtagPage = lazy(() => import("./Pages/HashtagPage/HashtagPage"));
 
 function App() {
   const [authUser, loading] = useAuthState(auth);
@@ -54,6 +55,10 @@ function App() {
             element={!authUser ? <AuthPage /> : <Navigate to="/" />}
           />
           <Route path="/reset-password/" element={<ResetPassword />} />
+          <Route
+            path="/tags/:tag"
+            element={authUser ? <HashtagPage /> : <Navigate to="/auth" />}
+          />
           <Route
             path="/:username"
             element={authUser ? <ProfilePage /> : <Navigate to="/auth" />}

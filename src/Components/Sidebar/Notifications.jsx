@@ -7,7 +7,6 @@ import {
   Text,
   VStack,
   Separator,
-  Image,
   Spinner,
   Center,
 } from "@chakra-ui/react";
@@ -22,22 +21,9 @@ import Comment from "../Comment/Comment";
 import Caption from "../Comment/Caption";
 import useAuthStore from "../../store/authStore";
 import PostFooter from "../FeedPosts/PostFooter";
-import useUserProfileStore from "../../store/userProfileStore";
 import useShowToast from "../../hooks/useShowToast";
-import { deleteObject, ref } from "firebase/storage";
-import {
-  arrayRemove,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-  writeBatch,
-} from "firebase/firestore";
-import { firestore, storage } from "../../firebase/firebaseConfig";
-import usePostStore from "../../store/postStore";
+import useDeletePost from "../../hooks/useDeletePost";
+import PostModalMedia from "../FeedPosts/PostModalMedia";
 import { Link } from "react-router-dom";
 import {
   AppDialogRoot,
@@ -114,75 +100,47 @@ const Notifications = () => {
   );
 };
 
+// Wording for each notification type: "<name> {before} {link} {emoji}"
+const NOTIFICATION_TEXT = {
+  like: { before: 'liked', link: 'your post', emoji: '❤' },
+  mention: { before: 'mentioned you in', link: 'a post', emoji: '💬' },
+  repost: { before: 'reposted', link: 'your post', emoji: '🔁' },
+  quote: { before: 'quoted', link: 'your post', emoji: '🔁' },
+};
+
 const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
   const [openPostModal, setOpenPostModal] = useState(false);
   const authUser = useAuthStore((state) => state.user);
-  const [isDeleting, setIsDeleting] = useState(false);
   const showToast = useShowToast();
 
   const { userProfile, isLoading: profileLoading } = useGetUserProfileById(
     notification?.senderId
   );
-  const postOwner = useUserProfileStore((state) => state.userProfile);
 
   const {
     post,
     isLoading: postLoading,
     getPostbyId,
   } = useGetPostByid(notification?.postId);
+  const { userProfile: postOwner } = useGetUserProfileById(post?.createdBy);
   const handlePostClick = async () => {
     await getPostbyId(notification.postId);
     setOpenPostModal(true);
     onOpen();
   };
 
+  const text = NOTIFICATION_TEXT[notification.type] ?? NOTIFICATION_TEXT.like;
+
   const handleDelete = () => {
     onDelete(notification.id);
   };
 
-  const deletePost = usePostStore((state) => state.deletePost);
-  const decrementPostsCount = useUserProfileStore((state) => state.deletePost);
+  const { isDeleting, deletePost } = useDeletePost();
 
   const handleDeletePost = async () => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
-    if (isDeleting) return;
-
-    setIsDeleting(true);
-    try {
-      if (post?.imageURL) {
-        await deleteObject(ref(storage, `posts/${notification.postId}`));
-      }
-      const userRef = doc(firestore, "users", authUser.uid);
-      await deleteDoc(doc(firestore, "posts", notification.postId));
-
-      await updateDoc(userRef, {
-        posts: arrayRemove(notification.postId),
-      });
-
-      const notificationsQuery = query(
-        collection(firestore, "notifications"),
-        where("postId", "==", notification.postId)
-      );
-      const notificationsSnapshot = await getDocs(notificationsQuery);
-
-      const batch = writeBatch(firestore);
-
-      notificationsSnapshot.forEach((docSnap) => {
-        batch.delete(docSnap.ref);
-      });
-
-      await batch.commit();
-
-      deletePost(notification.postId);
-      decrementPostsCount(notification.postId);
-
+    if (await deletePost({ ...post, id: notification.postId })) {
       showToast("Success", "Post deleted successfully", "success");
       onClose();
-    } catch (error) {
-      console.error(error.message);
-      showToast("Error", error.message, "error");
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -210,15 +168,15 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
               </Box>
             </Link>
             <Text onClick={onClose} cursor={'pointer'}>
-              <strong>{userProfile?.fullName}</strong> liked{' '}
+              <strong>{userProfile?.fullName}</strong> {text.before}{' '}
               <Text
                 as='span'
                 color='red.400'
                 onClick={handlePostClick}
                 cursor='pointer'>
-                Your Post
-              </Text>
-              ❤
+                {text.link}
+              </Text>{' '}
+              {text.emoji}
             </Text>
             <Button
               variant='ghost'
@@ -233,7 +191,7 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
         )}
       </Flex>
 
-      {openPostModal && post && userProfile && (
+      {openPostModal && post && postOwner && (
         <AppDialogRoot
           isOpen={openPostModal}
           onClose={() => setOpenPostModal(false)}
@@ -257,13 +215,7 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
                     flex={1.5}
                     justifyContent={'center'}
                     alignItems={'center'}>
-                    {post.imageURL ? (
-                  <Image src={post.imageURL} alt='profile post' />
-                ) : (
-                  <Text p={6} fontSize={'lg'} whiteSpace={'pre-wrap'} wordBreak={'break-word'}>
-                    {post.caption}
-                  </Text>
-                )}
+                    <PostModalMedia post={post} />
                   </Flex>
                   <Flex
                     flex={1}

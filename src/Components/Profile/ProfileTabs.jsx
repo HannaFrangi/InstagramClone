@@ -1,7 +1,12 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
-import { BsGrid3X3 } from "react-icons/bs";
+import { BsGrid3X3, BsTextParagraph } from "react-icons/bs";
 
-const ProfileTabs = () => {
+const TABS = [
+  { value: "posts", label: "Posts", icon: <BsTextParagraph /> },
+  { value: "media", label: "Media", icon: <BsGrid3X3 /> },
+];
+
+const ProfileTabs = ({ view, onChange }) => {
   return (
     <Flex
       w={"full"}
@@ -10,38 +15,25 @@ const ProfileTabs = () => {
       textTransform={"uppercase"}
       fontWeight={"bold"}
     >
-      <Flex
-        borderTop={"1px solid white"}
-        alignItems={"center"}
-        p='3'
-        gap={1}
-        cursor={"pointer"}
-      >
-        <Box fontSize={20}>
-          <BsGrid3X3 />
-        </Box>
-        <Text fontSize={12} display={{ base: "none", sm: "block" }}>
-          Posts
-        </Text>
-      </Flex>
-      {/* 
-      <Flex alignItems={"center"} p='3' gap={1} cursor={"pointer"}>
-        <Box fontSize={20}>
-          <BsBookmark />
-        </Box>
-        <Text fontSize={12} display={{ base: "none", sm: "block" }}>
-          Saved
-        </Text>
-      </Flex>
-
-      <Flex alignItems={"center"} p='3' gap={1} cursor={"pointer"}>
-        <Box fontSize={20}>
-          <BsSuitHeart fontWeight={"bold"} />
-        </Box>
-        <Text fontSize={12} display={{ base: "none", sm: "block" }}>
-          Likes
-        </Text>
-      </Flex> */}
+      {TABS.map((tab) => (
+        <Flex
+          key={tab.value}
+          as="button"
+          borderTop={"1px solid"}
+          borderColor={view === tab.value ? "white" : "transparent"}
+          color={view === tab.value ? "white" : "gray.500"}
+          alignItems={"center"}
+          p='3'
+          gap={1}
+          cursor={"pointer"}
+          onClick={() => onChange(tab.value)}
+        >
+          <Box fontSize={20}>{tab.icon}</Box>
+          <Text fontSize={12} display={{ base: "none", sm: "block" }}>
+            {tab.label}
+          </Text>
+        </Flex>
+      ))}
     </Flex>
   );
 };

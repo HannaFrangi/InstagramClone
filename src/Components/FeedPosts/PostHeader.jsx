@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import useFollowUser from "../../hooks/useFollowUser";
 import { timeAgo } from "../../utils/timeAgo";
 import useAuthStore from "../../store/authStore";
+import useDeletePost from "../../hooks/useDeletePost";
+import { MdDelete } from "react-icons/md";
 
 const PostHeader = ({ post, creatorProfile }) => {
   const { handleFollowUser, isFollowing, isUpdating } = useFollowUser(
@@ -17,6 +19,8 @@ const PostHeader = ({ post, creatorProfile }) => {
   );
 
   const authUser = useAuthStore((state) => state.user); // Get the logged-in user
+  const { isDeleting, deletePost } = useDeletePost();
+  const isOwnPost = authUser?.uid === post.createdBy;
 
   return (
     <Flex
@@ -52,8 +56,21 @@ const PostHeader = ({ post, creatorProfile }) => {
         </Flex>
       </Flex>
 
+      {isOwnPost && (
+        <Button
+          size={'xs'}
+          bg={'transparent'}
+          color={'gray.500'}
+          _hover={{ color: 'red.500' }}
+          aria-label={'Delete post'}
+          onClick={() => deletePost(post)}
+          loading={isDeleting}>
+          <MdDelete size={18} />
+        </Button>
+      )}
+
       {/* Conditionally render the follow button only if the logged-in user is not the creator */}
-      {authUser?.username !== creatorProfile?.username && (
+      {!isOwnPost && creatorProfile && (
         <Box cursor={'pointer'}>
           <Button
             size={'xs'}

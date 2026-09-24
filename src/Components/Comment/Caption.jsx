@@ -1,10 +1,12 @@
 import { Avatar, Flex, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { timeAgo } from "../../utils/timeAgo.js";
-import useUserProfileStore from "../../store/userProfileStore";
+import useGetUserProfileById from "../../hooks/useGetUserProfileById";
+import RichText from "../RichText";
 
 const Caption = ({ post }) => {
-  const userProfile = useUserProfileStore((state) => state.userProfile);
+  const { userProfile } = useGetUserProfileById(post.createdBy);
+  if (!userProfile) return null;
 
   return (
     <Flex gap={4}>
@@ -21,7 +23,9 @@ const Caption = ({ post }) => {
               {userProfile.username}
             </Text>
           </Link>
-          <Text fontSize={14}>{post.caption}</Text>
+          <Text fontSize={14}>
+            <RichText text={post.caption} />
+          </Text>
         </Flex>
         <Text fontSize={12} color={'gray'}>
           {timeAgo(post.createdAt)}

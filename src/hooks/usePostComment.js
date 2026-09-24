@@ -3,6 +3,7 @@ import useShowToast from "./useShowToast";
 import useAuthStore from "../store/authStore";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseConfig";
+import { notifyMentions } from "../utils/notifications";
 // import usePostStore from "../store/postStore";
 
 const usePostComment = () => {
@@ -30,6 +31,10 @@ const usePostComment = () => {
       await updateDoc(doc(firestore, "posts", postId), {
         comments: arrayUnion(newComment),
       });
+      // The comment is saved either way; a failed notification is not fatal
+      notifyMentions({ text: comment, senderId: authUser.uid, postId }).catch(
+        console.error
+      );
       // addComment(postId, newComment);
     } catch (error) {
       showToast("Error", error.message, "error");

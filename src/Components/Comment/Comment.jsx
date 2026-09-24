@@ -2,6 +2,7 @@ import { Avatar, Flex, Skeleton, SkeletonCircle, Text } from "@chakra-ui/react";
 import useGetUserProfileById from "../../hooks/useGetUserProfileById";
 import { Link } from "react-router-dom";
 import { timeAgo } from "../../utils/timeAgo.js";
+import RichText from "../RichText";
 
 const Comment = ({ comment }) => {
   const { userProfile, isLoading } = useGetUserProfileById(comment.createdBy);
@@ -23,7 +24,9 @@ const Comment = ({ comment }) => {
               {userProfile.username}
             </Text>
           </Link>
-          <Text fontSize={14}>{comment.comment}</Text>
+          <Text fontSize={14}>
+            <RichText text={comment.comment} />
+          </Text>
         </Flex>
         <Text fontSize={12} color={'gray'}>
           {timeAgo(comment.createdAt)}

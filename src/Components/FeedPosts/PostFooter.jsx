@@ -4,10 +4,14 @@ import {
   Flex,
   Input,
   InputGroup,
+  Menu,
+  Portal,
   Spinner,
   Text,
+  Textarea,
   useDisclosure,
 } from "@chakra-ui/react";
+import { BiRepost } from "react-icons/bi";
 import { useRef, useState } from "react";
 import {
   CommentLogo,
@@ -20,6 +24,19 @@ import useLikePost from "../../hooks/useLikePost";
 import { timeAgo } from "../../utils/timeAgo";
 import CommentsModal from "../Modal/CommentModal";
 import useGetUserProfileById from "../../hooks/useGetUserProfileById";
+import useRepost from "../../hooks/useRepost";
+import RichText from "../RichText";
+import QuotedPost from "./QuotedPost";
+import {
+  AppDialogRoot,
+  AppDialogBackdrop,
+  AppDialogPositioner,
+  AppDialogContent,
+  AppDialogCloseTrigger,
+  AppDialogHeader,
+  AppDialogBody,
+  AppDialogFooter,
+} from "../AppDialog.jsx";
 
 const CommentItem = ({ comment }) => {
   const { userProfile: commentUser, isLoading: commentLoading } =
@@ -34,7 +51,7 @@ const CommentItem = ({ comment }) => {
       <Text as="span" fontWeight="600" mr={1}>
         {commentUser?.username}
       </Text>
-      {comment.comment}
+      <RichText text={comment.comment} />
     </Text>
   );
 };
@@ -46,6 +63,8 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
   const commentRef = useRef(null);
   const { handleLikePost, isLiked, likes } = useLikePost(post, authUser);
   const { open, onOpen, onClose } = useDisclosure();
+  const repost = useRepost(post);
+  const quoteDialog = useDisclosure();
 
   const handleSubmitComment = async () => {
     await handlePostComment(post.id, comment);
@@ -66,9 +85,12 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
         >
           <CommentLogo />
         </Box>
+
+        <RepostMenu repost={repost} onQuote={quoteDialog.onOpen} />
       </Flex>
       <Text fontWeight={600} fontSize="sm">
         {likes} likes
+        {repost.repostCount > 0 && ` · ${repost.repostCount} reposts`}
       </Text>
       {isProfilePage && (
         <Text fontSize="12" color="gray">
@@ -83,7 +105,7 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
               <Text as="span" fontWeight="600" mr={1}>
                 {creatorProfile?.username}
               </Text>
-              {post.caption}
+              <RichText text={post.caption} />
             </Text>
           )}
           <Flex direction="column" gap={2} mt={-1}>
@@ -105,6 +127,14 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
             <CommentsModal isOpen={open} onClose={onClose} post={post} />
           )}
         </>
+      )}
+      {quoteDialog.open && (
+        <QuoteDialog
+          post={post}
+          onClose={quoteDialog.onClose}
+          quotePost={repost.quotePost}
+          isPosting={repost.isReposting}
+        />
       )}
       {authUser && (
         <Flex
@@ -145,3 +175,76 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
 };
 
 export default PostFooter;
+
+const RepostMenu = ({ repost, onQuote }) => {
+  const { hasReposted, isReposting, toggleRepost } = repost;
+
+  return (
+    <Menu.Root
+      onSelect={({ value }) => (value === "quote" ? onQuote() : toggleRepost())}
+    >
+      <Menu.Trigger asChild>
+        <Box
+          as="button"
+          cursor="pointer"
+          fontSize={24}
+          color={hasReposted ? "green.400" : undefined}
+          opacity={isReposting ? 0.5 : 1}
+          aria-label="Repost"
+          disabled={isReposting}
+        >
+          <BiRepost />
+        </Box>
+      </Menu.Trigger>
+      <Portal>
+        <Menu.Positioner>
+          <Menu.Content bg="black" border="1px solid" borderColor="whiteAlpha.300">
+            <Menu.Item value="repost" cursor="pointer">
+              {hasReposted ? "Undo repost" : "Repost"}
+            </Menu.Item>
+            <Menu.Item value="quote" cursor="pointer">
+              Quote
+            </Menu.Item>
+          </Menu.Content>
+        </Menu.Positioner>
+      </Portal>
+    </Menu.Root>
+  );
+};
+
+const MAX_QUOTE_LENGTH = 280;
+
+const QuoteDialog = ({ post, onClose, quotePost, isPosting }) => {
+  const [text, setText] = useState("");
+
+  const handleQuote = async () => {
+    if (await quotePost(text)) onClose();
+  };
+
+  return (
+    <AppDialogRoot isOpen onClose={onClose} size="lg">
+      <AppDialogBackdrop />
+      <AppDialogPositioner>
+        <AppDialogContent bg="black" border="1px solid gray">
+          <AppDialogHeader>Quote post</AppDialogHeader>
+          <AppDialogCloseTrigger />
+          <AppDialogBody>
+            <Textarea
+              placeholder="Add a comment..."
+              value={text}
+              maxLength={MAX_QUOTE_LENGTH}
+              onChange={(e) => setText(e.target.value)}
+              mb={3}
+            />
+            <QuotedPost postId={post.id} />
+          </AppDialogBody>
+          <AppDialogFooter>
+            <Button onClick={handleQuote} loading={isPosting} disabled={!text.trim()}>
+              Post
+            </Button>
+          </AppDialogFooter>
+        </AppDialogContent>
+      </AppDialogPositioner>
+    </AppDialogRoot>
+  );
+};
