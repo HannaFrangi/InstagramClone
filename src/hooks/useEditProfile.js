@@ -5,6 +5,7 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { firestore, storage } from "../firebase/firebaseConfig";
 import { doc, updateDoc } from "firebase/firestore";
 import useUserProfileStore from "../store/userProfileStore";
+import { setCachedUserProfile } from "./useGetUserProfileById";
 
 const useEditProfile = () => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -42,6 +43,7 @@ const useEditProfile = () => {
       localStorage.setItem("user-info", JSON.stringify(updatedUser));
       setAuthUser(updatedUser);
       setUserProfile(updatedUser);
+      setCachedUserProfile(authUser.uid, updatedUser);
       showToast("Success", "Profile updated successfully", "success");
     } catch (error) {
       showToast("Error", error.message, "error");

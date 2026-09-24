@@ -1,13 +1,16 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import HomePage from "./Pages/HomePage/HomePage";
-import AuthPage from "./Pages/AuthPage/AuthPage";
+import { lazy, Suspense } from "react";
 import PageLayout from "./Layout/PageLayout/PageLayout";
-import ProfilePage from "./Pages/ProfilePage/ProfilePage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebaseConfig";
-import ResetPassword from "./Pages/ResetPassword/ResetPassword";
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box, Center, Spinner } from "@chakra-ui/react";
 import { AppToaster } from "./lib/AppToaster.jsx";
+
+// Each page is its own chunk, downloaded the first time it's visited
+const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
+const AuthPage = lazy(() => import("./Pages/AuthPage/AuthPage"));
+const ProfilePage = lazy(() => import("./Pages/ProfilePage/ProfilePage"));
+const ResetPassword = lazy(() => import("./Pages/ResetPassword/ResetPassword"));
 
 function App() {
   const [authUser, loading] = useAuthState(auth);
@@ -34,21 +37,29 @@ function App() {
 
   return (
     <PageLayout>
-      <Routes>
-        <Route
-          path="/"
-          element={authUser ? <HomePage /> : <Navigate to="/auth" />}
-        />
-        <Route
-          path="/auth"
-          element={!authUser ? <AuthPage /> : <Navigate to="/" />}
-        />
-        <Route path="/reset-password/" element={<ResetPassword />} />
-        <Route
-          path="/:username"
-          element={authUser ? <ProfilePage /> : <Navigate to="/auth" />}
-        />
-      </Routes>
+      <Suspense
+        fallback={
+          <Center h={"100vh"}>
+            <Spinner color="white" />
+          </Center>
+        }
+      >
+        <Routes>
+          <Route
+            path="/"
+            element={authUser ? <HomePage /> : <Navigate to="/auth" />}
+          />
+          <Route
+            path="/auth"
+            element={!authUser ? <AuthPage /> : <Navigate to="/" />}
+          />
+          <Route path="/reset-password/" element={<ResetPassword />} />
+          <Route
+            path="/:username"
+            element={authUser ? <ProfilePage /> : <Navigate to="/auth" />}
+          />
+        </Routes>
+      </Suspense>
       <AppToaster />
     </PageLayout>
   );

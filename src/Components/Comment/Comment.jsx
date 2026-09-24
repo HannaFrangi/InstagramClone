@@ -7,6 +7,7 @@ const Comment = ({ comment }) => {
   const { userProfile, isLoading } = useGetUserProfileById(comment.createdBy);
 
   if (isLoading) return <CommentSkeleton />;
+  if (!userProfile) return null; // author's account no longer exists
   return (
     <Flex gap={4}>
       <Link to={`/${userProfile.username.toLowerCase()}`}>

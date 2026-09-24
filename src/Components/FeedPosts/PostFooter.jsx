@@ -8,7 +8,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import {
   CommentLogo,
   NotificationsLogo,
@@ -22,18 +22,10 @@ import CommentsModal from "../Modal/CommentModal";
 import useGetUserProfileById from "../../hooks/useGetUserProfileById";
 
 const CommentItem = ({ comment }) => {
-  const [shouldFetch, setShouldFetch] = useState(false);
   const { userProfile: commentUser, isLoading: commentLoading } =
     useGetUserProfileById(comment?.createdBy);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShouldFetch(true);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!shouldFetch || commentLoading) {
+  if (commentLoading) {
     return <Spinner size="xs" />;
   }
 
