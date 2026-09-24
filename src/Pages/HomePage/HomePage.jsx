@@ -1,25 +1,12 @@
-import { Box, Container, Flex, Spinner, Center } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { Box, Container, Flex } from "@chakra-ui/react";
+import { useEffect } from "react";
 import FeedPosts from "../../Components/FeedPosts/FeedPosts";
 import SuggestedUsers from "../../Components/SuggestedUsers/SuggestedUsers";
 
 const HomePage = () => {
-  const [loading, setLoading] = useState(true);
   useEffect(() => {
     document.title = "Home";
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
   }, []);
-
-  if (loading) {
-    return (
-      <Center height="100vh">
-        <Spinner size="xl" />
-      </Center>
-    );
-  }
 
   return (
     <Container maxW={"container.lg"}>
