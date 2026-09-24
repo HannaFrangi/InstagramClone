@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 .env
+.claude/*
+
+# Local seed-data credentials / leftovers (scripts/seed.mjs, scripts/unseed.mjs)
+scripts/.seed-users.json
+scripts/.seed-leftover-users.txt

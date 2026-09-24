@@ -9,6 +9,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "check-imports": "node scripts/check-import-case.mjs",
+    "seed": "node scripts/seed.mjs",
+    "unseed": "node scripts/unseed.mjs",
     "preview": "vite preview",
     "predeploy": "npm run build"
   },
