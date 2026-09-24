@@ -16,6 +16,8 @@ import ProfileTabs from "../../Components/Profile/ProfileTabs";
 import ProfilePosts from "../../Components/Profile/ProfilePosts";
 import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
 import FollowersAndFollowingModal from "../../Components/Profile/FollowersAndFollowingModal";
+import { tabsFor } from "../../Components/Profile/profileTabsConfig";
+import useAuthStore from "../../store/authStore";
 import {
   useParams,
   useNavigate,
@@ -32,7 +34,13 @@ const ProfilePage = () => {
   const location = useLocation();
   const { open, onOpen, onClose } = useDisclosure();
   const [activeTab, setActiveTab] = useState("followers");
-  const [postsView, setPostsView] = useState("posts");
+  const [selectedView, setPostsView] = useState("posts");
+  const authUser = useAuthStore((state) => state.user);
+  const isOwnProfile = !!userProfile && authUser?.uid === userProfile.uid;
+  // Saved/Likes only exist on your own profile; fall back when visiting others
+  const postsView = tabsFor(isOwnProfile).includes(selectedView)
+    ? selectedView
+    : "posts";
 
   const handleOpenFollowersModal = (tab) => {
     setActiveTab(tab);
@@ -88,7 +96,11 @@ const ProfilePage = () => {
         borderColor="whiteAlpha.300"
         direction="column"
       >
-        <ProfileTabs view={postsView} onChange={setPostsView} />
+        <ProfileTabs
+          view={postsView}
+          onChange={setPostsView}
+          isOwnProfile={isOwnProfile}
+        />
         <ProfilePosts view={postsView} />
       </Flex>
 

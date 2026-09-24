@@ -38,7 +38,20 @@ import { AppTooltip } from "../AppTooltip.jsx";
 
 const Notifications = () => {
   const { open, onOpen, onClose } = useDisclosure();
-  const { notifications, loading, deleteNotification } = useNotifications();
+  const {
+    notifications,
+    loading,
+    unreadCount,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotifications();
+
+  // Unread items stay highlighted while the panel is open and are marked
+  // read when it closes
+  const handleClose = () => {
+    markAllAsRead();
+    onClose();
+  };
 
   return (
     <>
@@ -59,12 +72,34 @@ const Notifications = () => {
           justifyContent={{ base: "center", md: "flex-start" }}
           onClick={onOpen}
         >
-          <NotificationsLogo />
+          <Box position={"relative"}>
+            <NotificationsLogo />
+            {unreadCount > 0 && (
+              <Flex
+                position={"absolute"}
+                top={"-6px"}
+                right={"-8px"}
+                minW={"18px"}
+                h={"18px"}
+                px={1}
+                borderRadius={"full"}
+                bg={"red.500"}
+                color={"white"}
+                fontSize={"10px"}
+                fontWeight={"bold"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                aria-label={`${unreadCount} unread notifications`}
+              >
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </Flex>
+            )}
+          </Box>
           <Box display={{ base: "none", md: "block" }}>Notifications</Box>
         </Flex>
       </AppTooltip>
 
-      <AppDialogRoot isOpen={open} onClose={onClose}>
+      <AppDialogRoot isOpen={open} onClose={handleClose}>
         <AppDialogBackdrop />
         <AppDialogPositioner>
           <AppDialogContent bg={"black"} border={"1px solid gray"} maxW={"400px"}>
@@ -86,7 +121,7 @@ const Notifications = () => {
                         notification={notification}
                         onDelete={deleteNotification}
                         onOpen={onOpen}
-                        onClose={onClose}
+                        onClose={handleClose}
                       />
                     ))
                   )}
@@ -106,6 +141,8 @@ const NOTIFICATION_TEXT = {
   mention: { before: 'mentioned you in', link: 'a post', emoji: '💬' },
   repost: { before: 'reposted', link: 'your post', emoji: '🔁' },
   quote: { before: 'quoted', link: 'your post', emoji: '🔁' },
+  comment: { before: 'commented on', link: 'your post', emoji: '💬' },
+  follow: { before: 'started following you', link: null, emoji: '👋' },
 };
 
 const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
@@ -150,6 +187,8 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
         p={2}
         borderBottom='1px'
         borderColor='gray.200'
+        borderRadius={6}
+        bg={notification.isRead ? 'transparent' : 'whiteAlpha.100'}
         alignItems='center'
         justifyContent='center'
         gap={2}>
@@ -169,13 +208,15 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
             </Link>
             <Text onClick={onClose} cursor={'pointer'}>
               <strong>{userProfile?.fullName}</strong> {text.before}{' '}
-              <Text
-                as='span'
-                color='red.400'
-                onClick={handlePostClick}
-                cursor='pointer'>
-                {text.link}
-              </Text>{' '}
+              {text.link && (
+                <Text
+                  as='span'
+                  color='red.400'
+                  onClick={handlePostClick}
+                  cursor='pointer'>
+                  {text.link}
+                </Text>
+              )}{' '}
               {text.emoji}
             </Text>
             <Button

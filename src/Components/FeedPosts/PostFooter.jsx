@@ -12,6 +12,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { BiRepost } from "react-icons/bi";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import useBookmark from "../../hooks/useBookmarks";
 import { useRef, useState } from "react";
 import {
   CommentLogo,
@@ -64,10 +66,11 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
   const { handleLikePost, isLiked, likes } = useLikePost(post, authUser);
   const { open, onOpen, onClose } = useDisclosure();
   const repost = useRepost(post);
+  const bookmark = useBookmark(post.id, authUser?.uid);
   const quoteDialog = useDisclosure();
 
   const handleSubmitComment = async () => {
-    await handlePostComment(post.id, comment);
+    await handlePostComment(post, comment);
     setComment("");
   };
 
@@ -87,6 +90,20 @@ const PostFooter = ({ post, isProfilePage, creatorProfile }) => {
         </Box>
 
         <RepostMenu repost={repost} onQuote={quoteDialog.onOpen} />
+
+        {authUser && (
+          <Box
+            as="button"
+            ml="auto"
+            cursor="pointer"
+            fontSize={20}
+            onClick={bookmark.toggleBookmark}
+            opacity={bookmark.isUpdating ? 0.5 : 1}
+            aria-label={bookmark.isSaved ? "Remove from saved" : "Save post"}
+          >
+            {bookmark.isSaved ? <BsBookmarkFill /> : <BsBookmark />}
+          </Box>
+        )}
       </Flex>
       <Text fontWeight={600} fontSize="sm">
         {likes} likes

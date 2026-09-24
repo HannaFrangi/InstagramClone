@@ -4,11 +4,12 @@ import {
   getDocs,
   query,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseConfig";
 import { extractMentions } from "./postText";
 
-// type: "like" | "mention" | "repost" | "quote"
+// type: "like" | "mention" | "repost" | "quote" | "comment" | "follow"
 // postId is the post the notification opens; sourcePostId (optional) is the
 // repost/quote that triggered it, so deleting that post clears it too.
 export const createNotification = async ({
@@ -49,4 +50,20 @@ export const notifyMentions = async ({ text, senderId, postId }) => {
       })
     )
   );
+};
+
+// Unfollowing takes back the "started following you" notification, so
+// following and unfollowing repeatedly doesn't spam the other person
+export const removeFollowNotification = async ({ receiverId, senderId }) => {
+  const snapshot = await getDocs(
+    query(
+      collection(firestore, "notifications"),
+      where("senderId", "==", senderId),
+      where("receiverId", "==", receiverId),
+      where("type", "==", "follow")
+    )
+  );
+  const batch = writeBatch(firestore);
+  snapshot.forEach((docSnap) => batch.delete(docSnap.ref));
+  await batch.commit();
 };

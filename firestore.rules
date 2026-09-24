@@ -25,6 +25,12 @@ service cloud.firestore {
       return after == before.union(me) || after == before.difference(me);
     }
 
+    function commentAddedBySelf(before, after) {
+      return after.size() == before.size() + 1
+        && after.hasAll(before)
+        && after[after.size() - 1].createdBy == request.auth.uid;
+    }
+
     // ---------- users ----------
     match /users/{userId} {
       allow read: if signedIn();
@@ -74,15 +80,23 @@ service cloud.firestore {
         && changedKeys().hasOnly(['reposts'])
         && togglesOwnUid('reposts');
 
-      // ...and add exactly one comment, authored by themselves
+      // ...and add exactly one comment, authored by themselves: the new list
+      // keeps every existing comment and has one more, the last one theirs
       allow update: if signedIn()
         && changedKeys().hasOnly(['comments'])
-        && request.resource.data.comments.size() == resource.data.comments.size() + 1
-        && request.resource.data.comments[0:resource.data.comments.size()] == resource.data.comments
-        && request.resource.data.comments[resource.data.comments.size()].createdBy == request.auth.uid
-        && request.resource.data.comments[resource.data.comments.size()].postId == postId;
+        && commentAddedBySelf(resource.data.get('comments', []), request.resource.data.comments);
 
       allow delete: if isUser(resource.data.createdBy);
+    }
+
+    // ---------- bookmarks ----------
+    // One private doc per user: { postIds: [...] }, newest saves last
+    match /bookmarks/{userId} {
+      allow read: if isUser(userId);
+      allow create, update: if isUser(userId)
+        && request.resource.data.keys().hasOnly(['postIds'])
+        && request.resource.data.postIds is list;
+      allow delete: if isUser(userId);
     }
 
     // ---------- notifications ----------
@@ -93,8 +107,9 @@ service cloud.firestore {
         && request.resource.data.senderId == request.auth.uid
         && request.resource.data.receiverId is string
         && request.resource.data.receiverId != request.auth.uid
-        && request.resource.data.type in ['like', 'mention', 'repost', 'quote']
-        && request.resource.data.postId is string
+        && request.resource.data.type in ['like', 'mention', 'repost', 'quote', 'comment', 'follow']
+        && (request.resource.data.postId is string
+          || (request.resource.data.type == 'follow' && request.resource.data.postId == null))
         && request.resource.data.isRead == false;
 
       allow update: if isUser(resource.data.receiverId)

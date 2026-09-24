@@ -5,6 +5,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebaseConfig";
 import { Box, Center, Spinner } from "@chakra-ui/react";
 import { AppToaster } from "./lib/AppToaster.jsx";
+import { useBookmarksSync } from "./hooks/useBookmarks";
 
 // Each page is its own chunk, downloaded the first time it's visited
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
@@ -15,6 +16,7 @@ const HashtagPage = lazy(() => import("./Pages/HashtagPage/HashtagPage"));
 
 function App() {
   const [authUser, loading] = useAuthState(auth);
+  useBookmarksSync(authUser?.uid);
 
   if (loading) {
     return (

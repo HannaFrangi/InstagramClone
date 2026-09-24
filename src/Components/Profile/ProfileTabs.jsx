@@ -1,12 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
-import { BsGrid3X3, BsTextParagraph } from "react-icons/bs";
+import { PROFILE_TABS } from "./profileTabsConfig";
 
-const TABS = [
-  { value: "posts", label: "Posts", icon: <BsTextParagraph /> },
-  { value: "media", label: "Media", icon: <BsGrid3X3 /> },
-];
-
-const ProfileTabs = ({ view, onChange }) => {
+const ProfileTabs = ({ view, onChange, isOwnProfile }) => {
   return (
     <Flex
       w={"full"}
@@ -15,7 +10,7 @@ const ProfileTabs = ({ view, onChange }) => {
       textTransform={"uppercase"}
       fontWeight={"bold"}
     >
-      {TABS.map((tab) => (
+      {PROFILE_TABS.filter((tab) => isOwnProfile || !tab.private).map((tab) => (
         <Flex
           key={tab.value}
           as="button"

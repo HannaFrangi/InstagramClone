@@ -8,6 +8,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  writeBatch,
 } from 'firebase/firestore';
 import useAuthStore from '../store/authStore';
 import useShowToast from './useShowToast';
@@ -36,6 +37,11 @@ const useNotifications = () => {
           }))
           .filter(
             (notification) => notification.senderId !== notification.receiverId
+          )
+          // Newest first; createdAt is a Firestore Timestamp
+          .sort(
+            (a, b) =>
+              (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0)
           );
 
         setNotifications(fetchedNotifications);
@@ -72,7 +78,30 @@ const useNotifications = () => {
     }
   };
 
-  return { notifications, loading, markAsRead, deleteNotification };
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  const markAllAsRead = async () => {
+    const unread = notifications.filter((n) => !n.isRead);
+    if (unread.length === 0) return;
+    try {
+      const batch = writeBatch(firestore);
+      unread.forEach((n) =>
+        batch.update(doc(firestore, 'notifications', n.id), { isRead: true })
+      );
+      await batch.commit();
+    } catch (error) {
+      console.error('Error marking notifications as read: ', error);
+    }
+  };
+
+  return {
+    notifications,
+    loading,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  };
 };
 
 export default useNotifications;

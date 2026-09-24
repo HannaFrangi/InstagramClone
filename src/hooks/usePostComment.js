@@ -3,7 +3,7 @@ import useShowToast from "./useShowToast";
 import useAuthStore from "../store/authStore";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseConfig";
-import { notifyMentions } from "../utils/notifications";
+import { createNotification, notifyMentions } from "../utils/notifications";
 // import usePostStore from "../store/postStore";
 
 const usePostComment = () => {
@@ -12,7 +12,8 @@ const usePostComment = () => {
   const authUser = useAuthStore((state) => state.user);
   // const addComment = usePostStore((state) => state.addComment);
 
-  const handlePostComment = async (postId, comment) => {
+  const handlePostComment = async (post, comment) => {
+    const postId = post.id;
     if (isCommenting) return;
 
     if (!authUser)
@@ -32,6 +33,12 @@ const usePostComment = () => {
         comments: arrayUnion(newComment),
       });
       // The comment is saved either way; a failed notification is not fatal
+      createNotification({
+        receiverId: post.createdBy,
+        senderId: authUser.uid,
+        type: "comment",
+        postId,
+      }).catch(console.error);
       notifyMentions({ text: comment, senderId: authUser.uid, postId }).catch(
         console.error
       );

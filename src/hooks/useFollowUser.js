@@ -4,6 +4,10 @@ import useUserProfileStore from "../store/userProfileStore";
 import useShowToast from "./useShowToast";
 import { firestore } from "../firebase/firebaseConfig";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import {
+  createNotification,
+  removeFollowNotification,
+} from "../utils/notifications";
 
 const useFollowUser = (userId) => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -27,6 +31,17 @@ const useFollowUser = (userId) => {
           ? arrayRemove(authUser.uid)
           : arrayUnion(authUser.uid),
       });
+
+      // The follow itself succeeded either way; notification errors aren't fatal
+      const notify = isFollowing
+        ? removeFollowNotification({ receiverId: userId, senderId: authUser.uid })
+        : createNotification({
+            receiverId: userId,
+            senderId: authUser.uid,
+            type: "follow",
+            postId: null,
+          });
+      notify.catch(console.error);
 
       if (isFollowing) {
         // unfollow
