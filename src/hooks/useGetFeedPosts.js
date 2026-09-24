@@ -42,7 +42,6 @@ const useGetFeedPosts = () => {
       q,
       (snapshot) => {
         if (snapshot.empty) {
-          console.log('No posts found.');
           setPosts([]);
           setIsLoading(false);
           return;

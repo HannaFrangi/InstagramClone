@@ -30,94 +30,90 @@ const ProfileHeader = ({ onOpenFollowersModal, userProfile }) => {
     <Flex
       gap={{ base: 4, sm: 10 }}
       py={10}
-      direction={{ base: "column", sm: "row" }}
-    >
+      direction={{ base: 'column', sm: 'row' }}>
       <AvatarGroup
-        size={{ base: "xl", md: "2xl" }}
-        justifySelf={"center"}
-        alignSelf={"flex-start"}
-        mx={"auto"}
-      >
+        size={{ base: 'xl', md: '2xl' }}
+        justifySelf={'center'}
+        alignSelf={'flex-start'}
+        mx={'auto'}>
         <Avatar.Root>
-          <Avatar.Image src={userProfile.profilePicURL} alt={userProfile.username} />
+          <Avatar.Image
+            src={userProfile.profilePicURL || undefined}
+            alt={userProfile.username}
+          />
           <Avatar.Fallback name={userProfile.username} />
         </Avatar.Root>
       </AvatarGroup>
 
-      <VStack alignItems={"start"} gap={2} mx={"auto"} flex={1}>
+      <VStack alignItems={'start'} gap={2} mx={'auto'} flex={1}>
         <Flex
           gap={4}
-          direction={{ base: "column", sm: "row" }}
-          justifyContent={{ base: "center", sm: "flex-start" }}
-          alignItems={"center"}
-          w={"full"}
-        >
-          <Text fontSize={{ base: "sm", md: "lg" }}>
+          direction={{ base: 'column', sm: 'row' }}
+          justifyContent={{ base: 'center', sm: 'flex-start' }}
+          alignItems={'center'}
+          w={'full'}>
+          <Text fontSize={{ base: 'sm', md: 'lg' }}>
             {userProfile.username}
           </Text>
           {visitingOwnProfileAndAuth && (
-            <Flex gap={4} alignItems={"center"} justifyContent={"center"}>
+            <Flex gap={4} alignItems={'center'} justifyContent={'center'}>
               <Button
-                bg={"white"}
-                color={"black"}
-                _hover={{ bg: "whiteAlpha.800" }}
-                size={{ base: "xs", md: "sm" }}
-                onClick={onOpen}
-              >
+                bg={'white'}
+                color={'black'}
+                _hover={{ bg: 'whiteAlpha.800' }}
+                size={{ base: 'xs', md: 'sm' }}
+                onClick={onOpen}>
                 Edit Profile
               </Button>
             </Flex>
           )}
           {visitingAnotherProfileAndAuth && (
-            <Flex gap={4} alignItems={"center"} justifyContent={"center"}>
+            <Flex gap={4} alignItems={'center'} justifyContent={'center'}>
               <Button
-                bg={"blue.500"}
-                color={"white"}
-                _hover={{ bg: "blue.600" }}
-                size={{ base: "xs", md: "sm" }}
+                bg={'blue.500'}
+                color={'white'}
+                _hover={{ bg: 'blue.600' }}
+                size={{ base: 'xs', md: 'sm' }}
                 onClick={handleFollowUser}
-                loading={isUpdating}
-              >
-                {isFollowing ? "Unfollow" : "Follow"}
+                loading={isUpdating}>
+                {isFollowing ? 'Unfollow' : 'Follow'}
               </Button>
             </Flex>
           )}
         </Flex>
 
-        <Flex alignItems={"center"} gap={{ base: 2, sm: 4 }}>
-          <Text fontSize={{ base: "xs", md: "sm" }}>
-            <Text as="span" fontWeight={"bold"} mr={1}>
+        <Flex alignItems={'center'} gap={{ base: 2, sm: 4 }}>
+          <Text fontSize={{ base: 'xs', md: 'sm' }}>
+            <Text as='span' fontWeight={'bold'} mr={1}>
               {userProfile.posts.length}
             </Text>
             Posts
           </Text>
-          <Text fontSize={{ base: "xs", md: "sm" }}>
+          <Text fontSize={{ base: 'xs', md: 'sm' }}>
             <Text
-              as="button"
-              fontWeight={"bold"}
+              as='button'
+              fontWeight={'bold'}
               mr={1}
-              onClick={() => handleOpenFollowersModal("followers")}
-            >
+              onClick={() => handleOpenFollowersModal('followers')}>
               {userProfile.Followers.length} Followers
             </Text>
           </Text>
-          <Text fontSize={{ base: "xs", md: "sm" }}>
+          <Text fontSize={{ base: 'xs', md: 'sm' }}>
             <Text
-              as="button"
-              fontWeight={"bold"}
+              as='button'
+              fontWeight={'bold'}
               mr={1}
-              onClick={() => handleOpenFollowersModal("following")}
-            >
+              onClick={() => handleOpenFollowersModal('following')}>
               {userProfile.Following.length} Following
             </Text>
           </Text>
         </Flex>
-        <Flex alignItems={"center"} gap={4}>
-          <Text fontSize={"sm"} fontWeight={"bold"}>
+        <Flex alignItems={'center'} gap={4}>
+          <Text fontSize={'sm'} fontWeight={'bold'}>
             {userProfile.fullName}
           </Text>
         </Flex>
-        <Text fontSize={"sm"}>{userProfile.bio}</Text>
+        <Text fontSize={'sm'}>{userProfile.bio}</Text>
       </VStack>
       {open && <EditProfile isOpen={open} onClose={onClose} />}
     </Flex>

@@ -20,56 +20,54 @@ const PostHeader = ({ post, creatorProfile }) => {
 
   return (
     <Flex
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      w={"full"}
-      my={2}
-    >
-      <Flex alignItems={"center"} gap={2}>
+      justifyContent={'space-between'}
+      alignItems={'center'}
+      w={'full'}
+      my={2}>
+      <Flex alignItems={'center'} gap={2}>
         {creatorProfile ? (
           <Link to={`/${creatorProfile.username}`}>
-            <Avatar.Root size={"sm"}>
+            <Avatar.Root size={'sm'}>
               <Avatar.Image
-                src={creatorProfile.profilePicURL}
+                src={creatorProfile.profilePicURL || undefined}
                 alt={creatorProfile.username}
               />
               <Avatar.Fallback name={creatorProfile.username} />
             </Avatar.Root>
           </Link>
         ) : (
-          <SkeletonCircle size="10" />
+          <SkeletonCircle size='10' />
         )}
 
-        <Flex fontSize={12} fontWeight={"bold"} gap="2">
+        <Flex fontSize={12} fontWeight={'bold'} gap='2'>
           {creatorProfile ? (
             <Link to={`/${creatorProfile.username}`}>
               {creatorProfile.username}
             </Link>
           ) : (
-            <Skeleton w={"100px"} h={"10px"} />
+            <Skeleton w={'100px'} h={'10px'} />
           )}
 
-          <Box color={"gray.500"}>• {timeAgo(post.createdAt)}</Box>
+          <Box color={'gray.500'}>• {timeAgo(post.createdAt)}</Box>
         </Flex>
       </Flex>
 
       {/* Conditionally render the follow button only if the logged-in user is not the creator */}
       {authUser?.username !== creatorProfile?.username && (
-        <Box cursor={"pointer"}>
+        <Box cursor={'pointer'}>
           <Button
-            size={"xs"}
-            bg={"transparent"}
+            size={'xs'}
+            bg={'transparent'}
             fontSize={12}
-            color={"blue.500"}
-            fontWeight={"bold"}
+            color={'blue.500'}
+            fontWeight={'bold'}
             _hover={{
-              color: "white",
+              color: 'white',
             }}
-            transition={"0.2s ease-in-out"}
+            transition={'0.2s ease-in-out'}
             onClick={handleFollowUser}
-            loading={isUpdating}
-          >
-            {isFollowing ? "Unfollow" : "Follow"}
+            loading={isUpdating}>
+            {isFollowing ? 'Unfollow' : 'Follow'}
           </Button>
         </Box>
       )}

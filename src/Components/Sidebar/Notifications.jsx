@@ -189,46 +189,43 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
     <>
       <Flex
         p={2}
-        borderBottom="1px"
-        borderColor="gray.200"
-        alignItems="center"
-        justifyContent="center"
-        gap={2}
-      >
+        borderBottom='1px'
+        borderColor='gray.200'
+        alignItems='center'
+        justifyContent='center'
+        gap={2}>
         {profileLoading || postLoading ? (
           <Center>
-            <Spinner size="xl" />
+            <Spinner size='xl' />
           </Center>
         ) : (
-          <Flex alignItems="center" gap={2} w="full">
+          <Flex alignItems='center' gap={2} w='full'>
             <Link to={`/${userProfile?.username}`}>
-              <Box onClick={onClose} cursor={"pointer"}>
+              <Box onClick={onClose} cursor={'pointer'}>
                 <Avatar.Root>
-                  <Avatar.Image src={userProfile?.profilePicURL} />
+                  <Avatar.Image src={userProfile?.profilePicURL || undefined} />
                   <Avatar.Fallback name={userProfile?.fullName} />
                 </Avatar.Root>
               </Box>
             </Link>
-            <Text onClick={onClose} cursor={"pointer"}>
-              <strong>{userProfile?.fullName}</strong> liked{" "}
+            <Text onClick={onClose} cursor={'pointer'}>
+              <strong>{userProfile?.fullName}</strong> liked{' '}
               <Text
-                as="span"
-                color="red.400"
+                as='span'
+                color='red.400'
                 onClick={handlePostClick}
-                cursor="pointer"
-              >
+                cursor='pointer'>
                 Your Post
               </Text>
               ❤
             </Text>
             <Button
-              variant="ghost"
+              variant='ghost'
               onClick={handleDelete}
-              colorPalette="red"
-              size="sm"
-              aria-label="Delete notification"
-              ml="auto"
-            >
+              colorPalette='red'
+              size='sm'
+              aria-label='Delete notification'
+              ml='auto'>
               <MdDeleteOutline />
             </Button>
           </Flex>
@@ -239,76 +236,74 @@ const NotificationItem = ({ notification, onDelete, onOpen, onClose }) => {
         <AppDialogRoot
           isOpen={openPostModal}
           onClose={() => setOpenPostModal(false)}
-          size="5xl"
-        >
+          size='5xl'>
           <AppDialogBackdrop />
           <AppDialogPositioner>
             <AppDialogContent>
               <AppDialogCloseTrigger />
-              <AppDialogBody bg={"black"} pb={5}>
+              <AppDialogBody bg={'black'} pb={5}>
                 <Flex
-                  gap="4"
-                  w={{ base: "90%", sm: "70%", md: "full" }}
-                  mx={"auto"}
-                  maxH={"90vh"}
-                  minH={"50vh"}
-                >
+                  gap='4'
+                  w={{ base: '90%', sm: '70%', md: 'full' }}
+                  mx={'auto'}
+                  maxH={'90vh'}
+                  minH={'50vh'}>
                   <Flex
                     borderRadius={4}
-                    overflow={"hidden"}
-                    border={"1px solid"}
-                    borderColor={"whiteAlpha.300"}
+                    overflow={'hidden'}
+                    border={'1px solid'}
+                    borderColor={'whiteAlpha.300'}
                     flex={1.5}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                  >
-                    <Image src={post.imageURL} alt="profile post" />
+                    justifyContent={'center'}
+                    alignItems={'center'}>
+                    <Image src={post.imageURL} alt='profile post' />
                   </Flex>
                   <Flex
                     flex={1}
-                    flexDir={"column"}
+                    flexDir={'column'}
                     px={10}
-                    display={{ base: "none", md: "flex" }}
-                  >
-                    <Flex alignItems={"center"} justifyContent={"space-between"}>
-                      <Flex alignItems={"center"} gap={4}>
-                        <Avatar.Root size={"sm"}>
-                          <Avatar.Image src={postOwner.profilePicURL} />
+                    display={{ base: 'none', md: 'flex' }}>
+                    <Flex
+                      alignItems={'center'}
+                      justifyContent={'space-between'}>
+                      <Flex alignItems={'center'} gap={4}>
+                        <Avatar.Root size={'sm'}>
+                          <Avatar.Image
+                            src={postOwner.profilePicURL || undefined}
+                          />
                           <Avatar.Fallback name={postOwner.username} />
                         </Avatar.Root>
-                        <Text fontWeight={"bold"} fontSize={12}>
+                        <Text fontWeight={'bold'} fontSize={12}>
                           {postOwner.username}
                         </Text>
                       </Flex>
 
                       {authUser?.uid === postOwner.uid && (
                         <Button
-                          size={"sm"}
-                          bg={"transparent"}
-                          _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
+                          size={'sm'}
+                          bg={'transparent'}
+                          _hover={{ bg: 'whiteAlpha.300', color: 'red.600' }}
                           borderRadius={4}
                           p={1}
                           onClick={handleDeletePost}
-                          loading={isDeleting}
-                        >
-                          <MdDelete size={20} cursor="pointer" />
+                          loading={isDeleting}>
+                          <MdDelete size={20} cursor='pointer' />
                         </Button>
                       )}
                     </Flex>
-                    <Separator my={4} borderColor={"gray.500"} />
+                    <Separator my={4} borderColor={'gray.500'} />
 
                     <VStack
-                      w="full"
-                      alignItems={"start"}
-                      maxH={"350px"}
-                      overflowY={"auto"}
-                    >
+                      w='full'
+                      alignItems={'start'}
+                      maxH={'350px'}
+                      overflowY={'auto'}>
                       {post.caption && <Caption post={post} key={post.id} />}
                       {post.comments.map((comment) => (
                         <Comment key={comment.id} comment={comment} />
                       ))}
                     </VStack>
-                    <Separator my={4} borderColor={"gray.800"} />
+                    <Separator my={4} borderColor={'gray.800'} />
 
                     <PostFooter isProfilePage={true} post={post} />
                   </Flex>

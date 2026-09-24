@@ -13,11 +13,13 @@ export function AppTooltip({
   contentProps,
 }) {
   return (
-    <Box ml={ml} display={display}>
+    <Box ml={ml}>
       <Tooltip.Root openDelay={openDelay} positioning={{ placement }}>
         <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
         <Tooltip.Positioner>
-          <Tooltip.Content {...contentProps}>{label}</Tooltip.Content>
+          <Tooltip.Content {...contentProps} display={display}>
+            {label}
+          </Tooltip.Content>
         </Tooltip.Positioner>
       </Tooltip.Root>
     </Box>

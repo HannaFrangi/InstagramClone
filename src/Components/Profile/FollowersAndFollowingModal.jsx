@@ -88,32 +88,31 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
   }
 
   return (
-    <AppDialogRoot isOpen={isOpen} onClose={handleClose} size="lg">
+    <AppDialogRoot isOpen={isOpen} onClose={handleClose} size='lg'>
       <AppDialogBackdrop />
       <AppDialogPositioner>
-        <AppDialogContent bg="black" border="1px solid gray" maxW="500px">
+        <AppDialogContent bg='black' border='1px solid gray' maxW='500px'>
           <AppDialogCloseTrigger />
           <AppDialogHeader>{`${userProfile?.username}'s Connections`}</AppDialogHeader>
           <AppDialogBody>
             <Tabs.Root
               value={tab}
               onValueChange={(e) => setTab(e.value)}
-              variant="enclosed"
-              colorPalette="purple"
-              fitted
-            >
-              <Tabs.List mb="1em">
-                <Tabs.Trigger value="followers" color="white">
+              variant='enclosed'
+              colorPalette='purple'
+              fitted>
+              <Tabs.List mb='1em'>
+                <Tabs.Trigger value='followers' color='white'>
                   Followers
                 </Tabs.Trigger>
-                <Tabs.Trigger value="following" color="white">
+                <Tabs.Trigger value='following' color='white'>
                   Following
                 </Tabs.Trigger>
               </Tabs.List>
-              <Tabs.Content value="followers">
+              <Tabs.Content value='followers'>
                 {listLoading ? (
                   <Center>
-                    <Spinner size="lg" />
+                    <Spinner size='lg' />
                   </Center>
                 ) : followers.length === 0 ? (
                   <Center>
@@ -121,32 +120,31 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                   </Center>
                 ) : (
                   followers.map((follower) => (
-                    <div style={{ marginTop: "20px" }} key={follower.uid}>
+                    <div style={{ marginTop: '20px' }} key={follower.uid}>
                       <Flex
-                        justifyContent="space-between"
-                        alignItems="center"
-                        w="full"
-                      >
-                        <Flex alignItems="center" gap={2}>
+                        justifyContent='space-between'
+                        alignItems='center'
+                        w='full'>
+                        <Flex alignItems='center' gap={2}>
                           <Link
                             to={`/${follower.username}`}
-                            onClick={handleClose}
-                          >
-                            <Avatar.Root size="md">
-                              <Avatar.Image src={follower.profilePicURL} />
+                            onClick={handleClose}>
+                            <Avatar.Root size='md'>
+                              <Avatar.Image
+                                src={follower.profilePicURL || undefined}
+                              />
                               <Avatar.Fallback name={follower.fullName} />
                             </Avatar.Root>
                           </Link>
-                          <VStack gap={2} alignItems="flex-start">
+                          <VStack gap={2} alignItems='flex-start'>
                             <Link
                               to={`/${follower.username}`}
-                              onClick={handleClose}
-                            >
-                              <Box fontSize={12} fontWeight="bold">
+                              onClick={handleClose}>
+                              <Box fontSize={12} fontWeight='bold'>
                                 {follower.fullName}
                               </Box>
                             </Link>
-                            <Box fontSize={11} color="gray.500">
+                            <Box fontSize={11} color='gray.500'>
                               {follower.Followers.length} followers
                             </Box>
                           </VStack>
@@ -156,10 +154,10 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                   ))
                 )}
               </Tabs.Content>
-              <Tabs.Content value="following">
+              <Tabs.Content value='following'>
                 {listLoading ? (
                   <Center>
-                    <Spinner size="lg" />
+                    <Spinner size='lg' />
                   </Center>
                 ) : following.length === 0 ? (
                   <Center>
@@ -167,32 +165,31 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                   </Center>
                 ) : (
                   following.map((followingUser) => (
-                    <Box style={{ marginTop: "20px" }} key={followingUser.uid}>
+                    <Box style={{ marginTop: '20px' }} key={followingUser.uid}>
                       <Flex
-                        justifyContent="space-between"
-                        alignItems="center"
-                        w="full"
-                      >
-                        <Flex alignItems="center" gap={2}>
+                        justifyContent='space-between'
+                        alignItems='center'
+                        w='full'>
+                        <Flex alignItems='center' gap={2}>
                           <Link
                             to={`/${followingUser.username}`}
-                            onClick={handleClose}
-                          >
-                            <Avatar.Root size="md">
-                              <Avatar.Image src={followingUser.profilePicURL} />
+                            onClick={handleClose}>
+                            <Avatar.Root size='md'>
+                              <Avatar.Image
+                                src={followingUser.profilePicURL || undefined}
+                              />
                               <Avatar.Fallback name={followingUser.fullName} />
                             </Avatar.Root>
                           </Link>
-                          <VStack gap={2} alignItems="flex-start">
+                          <VStack gap={2} alignItems='flex-start'>
                             <Link
                               to={`/${followingUser.username}`}
-                              onClick={handleClose}
-                            >
-                              <Box fontSize={12} fontWeight="bold">
+                              onClick={handleClose}>
+                              <Box fontSize={12} fontWeight='bold'>
                                 {followingUser.fullName}
                               </Box>
                             </Link>
-                            <Box fontSize={11} color="gray.500">
+                            <Box fontSize={11} color='gray.500'>
                               {followingUser.Followers.length} followers
                             </Box>
                           </VStack>

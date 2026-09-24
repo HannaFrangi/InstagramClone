@@ -131,21 +131,15 @@ const EditProfile = ({ isOpen, onClose }) => {
             bg={'black'}
             boxShadow={'xl'}
             border={'1px solid gray'}
-            mx={3}
-          >
+            mx={3}>
             <AppDialogHeader />
             <AppDialogCloseTrigger />
             <AppDialogBody>
               <Flex bg={'black'}>
-                <Stack
-                  gap={4}
-                  w={'full'}
-                  maxW={'md'}
-                  bg={'black'}
-                  p={6}
-                  my={0}
-                >
-                  <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
+                <Stack gap={4} w={'full'} maxW={'md'} bg={'black'} p={6} my={0}>
+                  <Heading
+                    lineHeight={1.1}
+                    fontSize={{ base: '2xl', sm: '3xl' }}>
                     Edit Profile
                   </Heading>
                   <Field.Root>
@@ -153,14 +147,20 @@ const EditProfile = ({ isOpen, onClose }) => {
                       <Center>
                         <Avatar.Root size='xl' border={'2px solid white '}>
                           <Avatar.Image
-                            src={selectedFile || authUser.profilePicURL}
+                            src={
+                              selectedFile ||
+                              authUser.profilePicURL ||
+                              undefined
+                            }
                             alt={authUser.username}
                           />
                           <Avatar.Fallback name={authUser.username} />
                         </Avatar.Root>
                       </Center>
                       <Center w='full'>
-                        <Button w='full' onClick={() => fileRef.current.click()}>
+                        <Button
+                          w='full'
+                          onClick={() => fileRef.current.click()}>
                           Edit Profile Picture
                         </Button>
                       </Center>
@@ -219,8 +219,7 @@ const EditProfile = ({ isOpen, onClose }) => {
                       w='full'
                       size='sm'
                       _hover={{ bg: 'red.500' }}
-                      onClick={onClose}
-                    >
+                      onClick={onClose}>
                       Cancel
                     </Button>
                     <Button
@@ -230,8 +229,7 @@ const EditProfile = ({ isOpen, onClose }) => {
                       w='full'
                       _hover={{ bg: 'blue.500' }}
                       onClick={handleEditProfile}
-                      loading={isUpdating}
-                    >
+                      loading={isUpdating}>
                       Submit
                     </Button>
                   </Stack>

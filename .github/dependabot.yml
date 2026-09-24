@@ -15,6 +15,16 @@ updates:
       - dependencies
     commit-message:
       prefix: chore(deps)
+      
+    # ✅ Added ignore rules to stop peer dependency conflicts
+    ignore:
+      - dependency-name: "eslint"
+        versions: [">= 10.0.0"]
+      - dependency-name: "@eslint/js"
+        versions: [">= 10.0.0"]
+      - dependency-name: "react-firebase-hooks"
+        update-types: ["version-update:semver-major"]
+
     groups:
       # Fewer PRs: related packages bump together after one CI run
       react-ecosystem:

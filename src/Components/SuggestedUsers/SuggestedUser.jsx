@@ -18,21 +18,21 @@ const SuggestedUser = ({ user, setUser }) => {
   };
 
   return (
-    <Flex justifyContent={"space-between"} alignItems={"center"} w={"full"}>
-      <Flex alignItems={"center"} gap={2}>
+    <Flex justifyContent={'space-between'} alignItems={'center'} w={'full'}>
+      <Flex alignItems={'center'} gap={2}>
         <Link to={`/${user.username}`}>
-          <Avatar.Root size={"md"}>
-            <Avatar.Image src={user.profilePicURL} />
+          <Avatar.Root size={'md'}>
+            <Avatar.Image src={user.profilePicURL || undefined} />
             <Avatar.Fallback name={user.username} />
           </Avatar.Root>
         </Link>
-        <VStack gap={2} alignItems={"flex-start"}>
+        <VStack gap={2} alignItems={'flex-start'}>
           <Link to={`/${user.username}`}>
-            <Box fontSize={12} fontWeight={"bold"}>
+            <Box fontSize={12} fontWeight={'bold'}>
               {user.fullName}
             </Box>
           </Link>
-          <Box fontSize={11} color={"gray.500"}>
+          <Box fontSize={11} color={'gray.500'}>
             {user.Followers.length} followers
           </Box>
         </VStack>
@@ -40,17 +40,16 @@ const SuggestedUser = ({ user, setUser }) => {
       {authUser.uid !== user.uid && (
         <Button
           fontSize={13}
-          bg={"transparent"}
+          bg={'transparent'}
           p={0}
-          h={"max-content"}
-          fontWeight={"medium"}
-          color={"blue.400"}
-          cursor={"pointer"}
-          _hover={{ color: "white" }}
+          h={'max-content'}
+          fontWeight={'medium'}
+          color={'blue.400'}
+          cursor={'pointer'}
+          _hover={{ color: 'white' }}
           onClick={onFollowUser}
-          loading={isUpdating}
-        >
-          {isFollowing ? "Unfollow" : "Follow"}
+          loading={isUpdating}>
+          {isFollowing ? 'Unfollow' : 'Follow'}
         </Button>
       )}
     </Flex>

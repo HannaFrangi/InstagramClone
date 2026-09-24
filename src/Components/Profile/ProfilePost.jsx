@@ -94,39 +94,37 @@ const ProfilePost = ({ post }) => {
   return (
     <>
       <GridItem
-        cursor={"pointer"}
+        cursor={'pointer'}
         borderRadius={4}
-        overflow={"hidden"}
-        border={"1px solid"}
-        borderColor={"whiteAlpha.300"}
-        position={"relative"}
+        overflow={'hidden'}
+        border={'1px solid'}
+        borderColor={'whiteAlpha.300'}
+        position={'relative'}
         aspectRatio={1 / 1}
-        onClick={onOpen}
-      >
+        onClick={onOpen}>
         <Flex
           opacity={0}
           _hover={{ opacity: 1 }}
-          position={"absolute"}
+          position={'absolute'}
           top={0}
           left={0}
           right={0}
           bottom={0}
-          bg={"blackAlpha.700"}
-          transition={"all 0.3s ease"}
+          bg={'blackAlpha.700'}
+          transition={'all 0.3s ease'}
           zIndex={1}
-          justifyContent={"center"}
-        >
-          <Flex alignItems={"center"} justifyContent={"center"} gap={50}>
+          justifyContent={'center'}>
+          <Flex alignItems={'center'} justifyContent={'center'} gap={50}>
             <Flex>
               <AiFillHeart size={20} />
-              <Text fontWeight={"bold"} ml={2}>
+              <Text fontWeight={'bold'} ml={2}>
                 {post.likes.length}
               </Text>
             </Flex>
 
             <Flex>
               <FaComment size={20} />
-              <Text fontWeight={"bold"} ml={2}>
+              <Text fontWeight={'bold'} ml={2}>
                 {post.comments.length}
               </Text>
             </Flex>
@@ -136,81 +134,78 @@ const ProfilePost = ({ post }) => {
         <Image
           src={post.imageURL}
           alt={`${userProfile.username}'s Post`}
-          w={"100%"}
-          h={"100%"}
-          objectFit={"cover"}
+          w={'100%'}
+          h={'100%'}
+          objectFit={'cover'}
         />
       </GridItem>
 
-      <AppDialogRoot isOpen={open} onClose={onClose} size="5xl">
+      <AppDialogRoot isOpen={open} onClose={onClose} size='5xl'>
         <AppDialogBackdrop />
         <AppDialogPositioner>
           <AppDialogContent>
             <AppDialogCloseTrigger />
-            <AppDialogBody bg={"black"} pb={5}>
+            <AppDialogBody bg={'black'} pb={5}>
               <Flex
-                gap="4"
-                w={{ base: "90%", sm: "70%", md: "full" }}
-                mx={"auto"}
-                maxH={"90vh"}
-                minH={"50vh"}
-              >
+                gap='4'
+                w={{ base: '90%', sm: '70%', md: 'full' }}
+                mx={'auto'}
+                maxH={'90vh'}
+                minH={'50vh'}>
                 <Flex
                   borderRadius={4}
-                  overflow={"hidden"}
-                  border={"1px solid"}
-                  borderColor={"whiteAlpha.300"}
+                  overflow={'hidden'}
+                  border={'1px solid'}
+                  borderColor={'whiteAlpha.300'}
                   flex={1.5}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                >
-                  <Image src={post.imageURL} alt="profile post" />
+                  justifyContent={'center'}
+                  alignItems={'center'}>
+                  <Image src={post.imageURL} alt='profile post' />
                 </Flex>
                 <Flex
                   flex={1}
-                  flexDir={"column"}
+                  flexDir={'column'}
                   px={10}
-                  display={{ base: "none", md: "flex" }}
-                >
-                  <Flex alignItems={"center"} justifyContent={"space-between"}>
-                    <Flex alignItems={"center"} gap={4}>
-                      <Avatar.Root size={"sm"}>
-                        <Avatar.Image src={userProfile.profilePicURL} />
+                  display={{ base: 'none', md: 'flex' }}>
+                  <Flex alignItems={'center'} justifyContent={'space-between'}>
+                    <Flex alignItems={'center'} gap={4}>
+                      <Avatar.Root size={'sm'}>
+                        <Avatar.Image
+                          src={userProfile.profilePicURL || undefined}
+                        />
                         <Avatar.Fallback name={userProfile.username} />
                       </Avatar.Root>
-                      <Text fontWeight={"bold"} fontSize={12}>
+                      <Text fontWeight={'bold'} fontSize={12}>
                         {userProfile.username}
                       </Text>
                     </Flex>
 
                     {authUser?.uid === userProfile.uid && (
                       <Button
-                        size={"sm"}
-                        bg={"transparent"}
-                        _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
+                        size={'sm'}
+                        bg={'transparent'}
+                        _hover={{ bg: 'whiteAlpha.300', color: 'red.600' }}
                         borderRadius={4}
                         p={1}
                         onClick={handleDeletePost}
-                        loading={isDeleting}
-                      >
-                        <MdDelete size={20} cursor="pointer" />
+                        loading={isDeleting}>
+                        <MdDelete size={20} cursor='pointer' />
                       </Button>
                     )}
                   </Flex>
-                  <Separator my={4} borderColor={"gray.500"} />
+                  <Separator my={4} borderColor={'gray.500'} />
 
                   <VStack
-                    w="full"
-                    alignItems={"start"}
-                    maxH={"350px"}
-                    overflowY={"auto"}
-                  >
+                    w='full'
+                    alignItems={'start'}
+                    maxH={'350px'}
+                    overflowY={'auto'}>
                     {post.caption && <Caption post={post} key={post.id} />}
                     {post.comments.map((comment) => (
                       <Comment key={comment.id} comment={comment} />
                     ))}
                   </VStack>
-                  <Separator my={4} borderColor={"gray.800"} />
+                  <Separator my={4} borderColor={'gray.800'} />
 
                   <PostFooter isProfilePage={true} post={post} />
                 </Flex>

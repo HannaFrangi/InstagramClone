@@ -10,21 +10,21 @@ const Comment = ({ comment }) => {
   return (
     <Flex gap={4}>
       <Link to={`/${userProfile.username.toLowerCase()}`}>
-        <Avatar.Root size={"sm"}>
-          <Avatar.Image src={userProfile.profilePicURL} />
+        <Avatar.Root size={'sm'}>
+          <Avatar.Image src={userProfile.profilePicURL || undefined} />
           <Avatar.Fallback name={userProfile.username} />
         </Avatar.Root>
       </Link>
-      <Flex direction={"column"}>
-        <Flex gap={2} alignItems={"center"}>
+      <Flex direction={'column'}>
+        <Flex gap={2} alignItems={'center'}>
           <Link to={`/${userProfile.username}`}>
-            <Text fontWeight={"bold"} fontSize={12}>
+            <Text fontWeight={'bold'} fontSize={12}>
               {userProfile.username}
             </Text>
           </Link>
           <Text fontSize={14}>{comment.comment}</Text>
         </Flex>
-        <Text fontSize={12} color={"gray"}>
+        <Text fontSize={12} color={'gray'}>
           {timeAgo(comment.createdAt)}
         </Text>
       </Flex>
