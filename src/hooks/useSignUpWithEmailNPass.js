@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { firestore, auth } from "../firebase/firebaseConfig";
 import {
   collection,
@@ -13,18 +13,9 @@ import useShowToast from "./useShowToast";
 import useAuthStore from "../store/authStore";
 
 const useSignUpWithEmailNPass = () => {
-  const [createUserWithEmailAndPassword] =
-    useCreateUserWithEmailAndPassword(auth);
   const [loading, setLoading] = useState(false);
   const showToast = useShowToast();
   const loginUser = useAuthStore((state) => state.login);
-
-  const isExistingEmail = async (email) => {
-    const userRef = collection(firestore, "users");
-    const q = query(userRef, where("email", "==", email.toLowerCase()));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
-  };
 
   const isValidUsername = (username) => {
     if (username.length < 1 || username.length > 30) {
@@ -76,35 +67,24 @@ const useSignUpWithEmailNPass = () => {
     }
 
     setLoading(true);
+    // The account is created first: Firebase Auth rejects duplicate emails
+    // itself, and the security rules only let signed-in users read profiles.
+    let newUser = null;
+    let profileCreated = false;
     try {
-      if (await isExistingEmail(inputs.email)) {
-        showToast(
-          "Error",
-          "Email already exists. Please use a different email.",
-          "error"
-        );
-        return;
-      }
+      newUser = await createUserWithEmailAndPassword(
+        auth,
+        inputs.email,
+        inputs.password
+      );
 
-      const userRef = collection(firestore, "users");
       const q = query(
-        userRef,
+        collection(firestore, "users"),
         where("username", "==", inputs.username.toLowerCase())
       );
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
         showToast("Oops", "Username Already Exists", "error");
-        return;
-      }
-
-      const newUser = await createUserWithEmailAndPassword(
-        inputs.email,
-        inputs.password
-      );
-
-      if (!newUser) {
-        showToast("Error", "User creation failed", "error");
-        setLoading(false);
         return;
       }
 
@@ -122,13 +102,27 @@ const useSignUpWithEmailNPass = () => {
       };
 
       await setDoc(doc(firestore, "users", newUser.user.uid), userDoc);
+      profileCreated = true;
       localStorage.setItem("user-info", JSON.stringify(userDoc));
       loginUser(userDoc);
       showToast("Success", "User signed up successfully!", "success");
     } catch (error) {
       console.log("Signup error:", error);
-      showToast("Error", error.message, "error");
+      if (error.code === "auth/email-already-in-use") {
+        showToast(
+          "Error",
+          "Email already exists. Please use a different email.",
+          "error"
+        );
+      } else {
+        showToast("Error", error.message, "error");
+      }
     } finally {
+      // Don't leave behind an account with no profile (e.g. username taken),
+      // so the same email can be used to try again
+      if (newUser && !profileCreated) {
+        await newUser.user.delete().catch(console.error);
+      }
       setLoading(false);
     }
   };

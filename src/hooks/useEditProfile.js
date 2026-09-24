@@ -39,7 +39,14 @@ const useEditProfile = () => {
         profilePicURL: URL || authUser.profilePicURL,
       };
 
-      await updateDoc(userDocRef, updatedUser);
+      // Only write the edited fields: the cached authUser can hold an
+      // out-of-date follower list that would overwrite newer follows
+      await updateDoc(userDocRef, {
+        fullName: updatedUser.fullName,
+        username: updatedUser.username,
+        bio: updatedUser.bio,
+        profilePicURL: updatedUser.profilePicURL,
+      });
       localStorage.setItem("user-info", JSON.stringify(updatedUser));
       setAuthUser(updatedUser);
       setUserProfile(updatedUser);

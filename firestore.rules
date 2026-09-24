@@ -1,0 +1,106 @@
+rules_version = '2';
+
+// Every read and write in this app happens in the browser, so these rules are
+// the only thing stopping a signed-in user from editing data that isn't theirs.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // The list `field` only gained or lost the caller's own uid
+    function togglesOwnUid(field) {
+      let before = resource.data.get(field, []).toSet();
+      let after = request.resource.data.get(field, []).toSet();
+      let me = [request.auth.uid].toSet();
+      return after == before.union(me) || after == before.difference(me);
+    }
+
+    // ---------- users ----------
+    match /users/{userId} {
+      allow read: if signedIn();
+
+      allow create: if isUser(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.Followers == []
+        && request.resource.data.Following == []
+        && request.resource.data.posts == [];
+
+      // Owner edits their profile, who they follow, and their post list
+      allow update: if isUser(userId)
+        && changedKeys().hasOnly(['fullName', 'username', 'bio', 'profilePicURL', 'Following', 'posts']);
+
+      // Anyone else can only follow/unfollow (add/remove themselves as a follower)
+      allow update: if signedIn() && !isUser(userId)
+        && changedKeys().hasOnly(['Followers'])
+        && togglesOwnUid('Followers');
+
+      allow delete: if false;
+    }
+
+    // ---------- posts ----------
+    match /posts/{postId} {
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.caption is string
+        && request.resource.data.caption.size() <= 2200
+        && request.resource.data.likes == []
+        && request.resource.data.comments == []
+        && request.resource.data.get('reposts', []) == []
+        && !('imageURL' in request.resource.data)
+        && (!('repostOf' in request.resource.data) || request.resource.data.repostOf is string);
+
+      // Owner attaches the image URL after uploading it
+      allow update: if isUser(resource.data.createdBy)
+        && changedKeys().hasOnly(['imageURL'])
+        && request.resource.data.imageURL is string;
+
+      // Anyone signed in can like/unlike and repost/undo as themselves
+      allow update: if signedIn()
+        && changedKeys().hasOnly(['likes'])
+        && togglesOwnUid('likes');
+      allow update: if signedIn()
+        && changedKeys().hasOnly(['reposts'])
+        && togglesOwnUid('reposts');
+
+      // ...and add exactly one comment, authored by themselves
+      allow update: if signedIn()
+        && changedKeys().hasOnly(['comments'])
+        && request.resource.data.comments.size() == resource.data.comments.size() + 1
+        && request.resource.data.comments[0:resource.data.comments.size()] == resource.data.comments
+        && request.resource.data.comments[resource.data.comments.size()].createdBy == request.auth.uid
+        && request.resource.data.comments[resource.data.comments.size()].postId == postId;
+
+      allow delete: if isUser(resource.data.createdBy);
+    }
+
+    // ---------- notifications ----------
+    match /notifications/{notificationId} {
+      allow read: if isUser(resource.data.receiverId) || isUser(resource.data.senderId);
+
+      allow create: if signedIn()
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.receiverId is string
+        && request.resource.data.receiverId != request.auth.uid
+        && request.resource.data.type in ['like', 'mention', 'repost', 'quote']
+        && request.resource.data.postId is string
+        && request.resource.data.isRead == false;
+
+      allow update: if isUser(resource.data.receiverId)
+        && changedKeys().hasOnly(['isRead']);
+
+      allow delete: if isUser(resource.data.receiverId) || isUser(resource.data.senderId);
+    }
+  }
+}

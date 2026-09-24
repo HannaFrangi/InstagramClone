@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isImageUnder5MB() {
+      return request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    function ownsPost(postId) {
+      return request.auth != null
+        && firestore.get(/databases/(default)/documents/posts/$(postId)).data.createdBy == request.auth.uid;
+    }
+
+    // Post images: uploaded right after the post doc is created, deleted before it
+    match /posts/{postId} {
+      allow read: if request.auth != null;
+      allow create, update: if ownsPost(postId) && isImageUnder5MB();
+      allow delete: if ownsPost(postId);
+    }
+
+    match /profilePics/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId && isImageUnder5MB();
+    }
+  }
+}
