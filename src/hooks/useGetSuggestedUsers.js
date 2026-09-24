@@ -4,7 +4,6 @@ import {
   limit,
   orderBy,
   query,
-  where,
 } from "firebase/firestore";
 import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
@@ -21,21 +20,22 @@ const useGetSuggestedUsers = () => {
   useEffect(() => {
     const getSuggestedUsers = async () => {
       try {
-        const userRef = collection(firestore, "users");
-
+        // "not-in" only accepts 10 values, so instead fetch enough profiles
+        // that at least 3 remain after dropping yourself and everyone you
+        // already follow
+        const excluded = new Set([authUser.uid, ...(authUser.Following ?? [])]);
         const q = query(
-          userRef,
-          where("uid", "not-in", [authUser.uid, ...authUser.Following]),
+          collection(firestore, "users"),
           orderBy("uid"),
-          limit(3)
+          limit(excluded.size + 3)
         );
 
         const querySnapshot = await getDocs(q);
 
-        const users = [];
-        querySnapshot.forEach((doc) => {
-          users.push({ ...doc.data(), id: doc.id });
-        });
+        const users = querySnapshot.docs
+          .filter((doc) => !excluded.has(doc.id))
+          .slice(0, 3)
+          .map((doc) => ({ ...doc.data(), id: doc.id }));
 
         setResult({ forUser: authUser, users });
       } catch (error) {

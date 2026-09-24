@@ -1,10 +1,6 @@
 import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
-import { ThemeProvider } from 'next-themes';
 
+// Dark mode is fixed via class="dark" on <html> in index.html
 export function Provider({ children }) {
-  return (
-    <ThemeProvider attribute='class' defaultTheme='dark' forcedTheme='dark'>
-      <ChakraProvider value={defaultSystem}>{children}</ChakraProvider>
-    </ThemeProvider>
-  );
+  return <ChakraProvider value={defaultSystem}>{children}</ChakraProvider>;
 }
