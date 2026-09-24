@@ -4,9 +4,9 @@ import FeedPosts from "../../Components/FeedPosts/FeedPosts";
 import SuggestedUsers from "../../Components/SuggestedUsers/SuggestedUsers";
 
 const HomePage = () => {
-  document.title = "Home";
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    document.title = "Home";
     const timer = setTimeout(() => {
       setLoading(false);
     }, 2000);

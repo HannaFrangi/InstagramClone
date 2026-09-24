@@ -91,12 +91,14 @@ const ProfilePage = () => {
         <ProfilePosts userProfile={userProfile} loading={isLoading} />
       </Flex>
 
-      <FollowersAndFollowingModal
-        isOpen={open}
-        onClose={onClose}
-        activeTab={activeTab}
-        userProfile={userProfile}
-      />
+      {open && (
+        <FollowersAndFollowingModal
+          isOpen={open}
+          onClose={onClose}
+          activeTab={activeTab}
+          userProfile={userProfile}
+        />
+      )}
     </Container>
   );
 };

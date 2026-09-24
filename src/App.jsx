@@ -7,7 +7,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebaseConfig";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
 import { Box, Spinner } from "@chakra-ui/react";
-import { AppToaster } from "./lib/toaster.jsx";
+import { AppToaster } from "./lib/AppToaster.jsx";
 
 function App() {
   const [authUser, loading] = useAuthState(auth);

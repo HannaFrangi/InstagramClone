@@ -12,13 +12,13 @@ import { firestore } from "../firebase/firebaseConfig";
 import { useEffect, useState } from "react";
 
 const useGetSuggestedUsers = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [result, setResult] = useState({ forUser: null, users: [] });
   const authUser = useAuthStore((state) => state.user);
   const showToast = useShowToast();
+  const isLoading = result.forUser !== authUser;
+  const suggestedUsers = result.users;
 
   useEffect(() => {
-    setIsLoading(true);
     const getSuggestedUsers = async () => {
       try {
         const userRef = collection(firestore, "users");
@@ -37,11 +37,10 @@ const useGetSuggestedUsers = () => {
           users.push({ ...doc.data(), id: doc.id });
         });
 
-        setSuggestedUsers(users);
+        setResult({ forUser: authUser, users });
       } catch (error) {
         showToast("error", error.message, "error");
-      } finally {
-        setIsLoading(false);
+        setResult({ forUser: authUser, users: [] });
       }
     };
 

@@ -9,7 +9,7 @@ import {
 import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
 import { firestore } from "../firebase/firebaseConfig";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // Function to create a notification, takes showToast as an argument
 const createNotification = async (
@@ -44,11 +44,13 @@ const useLikePost = (post) => {
   const [isLiked, setIsLiked] = useState(post.likes.includes(authUser?.uid));
   const showToast = useShowToast();
 
-  useEffect(() => {
-    if (authUser && post.likes.includes(authUser.uid)) {
-      setIsLiked(true);
-    }
-  }, [authUser, post.likes]);
+  // Resync local state when the post's likes or the logged-in user change
+  const [synced, setSynced] = useState({ likes: post.likes, uid: authUser?.uid });
+  if (synced.likes !== post.likes || synced.uid !== authUser?.uid) {
+    setSynced({ likes: post.likes, uid: authUser?.uid });
+    setLikes(post.likes.length);
+    setIsLiked(post.likes.includes(authUser?.uid));
+  }
 
   const handleLikePost = async () => {
     if (isUpdating) return;

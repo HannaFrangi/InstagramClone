@@ -4,13 +4,13 @@ import { firestore } from "../firebase/firebaseConfig";
 import useShowToast from "./useShowToast";
 
 const useGetUserProfilesByIds = (userIds) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userProfiles, setUserProfiles] = useState([]);
+  const [result, setResult] = useState({ forIds: null, profiles: [] });
   const showToast = useShowToast();
+  const isLoading = userIds.length > 0 && result.forIds !== userIds;
+  const userProfiles = userIds.length > 0 ? result.profiles : [];
 
   useEffect(() => {
     const fetchUserProfiles = async () => {
-      setIsLoading(true);
       const profiles = [];
       try {
         for (const userId of userIds) {
@@ -19,12 +19,11 @@ const useGetUserProfilesByIds = (userIds) => {
             profiles.push({ uid: userId, ...userRef.data() });
           }
         }
-        setUserProfiles(profiles);
       } catch (error) {
         console.error(error.message);
         showToast("Error", error.message, "error");
       } finally {
-        setIsLoading(false);
+        setResult({ forIds: userIds, profiles });
       }
     };
 

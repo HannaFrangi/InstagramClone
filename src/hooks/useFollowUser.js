@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useAuthStore from "../store/authStore";
 import useUserProfileStore from "../store/userProfileStore";
 import useShowToast from "./useShowToast";
@@ -7,8 +7,8 @@ import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 
 const useFollowUser = (userId) => {
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
   const authUser = useAuthStore((state) => state.user);
+  const isFollowing = !!authUser?.Following?.includes(userId);
   const setAuthUser = useAuthStore((state) => state.setUser);
   const { userProfile, setUserProfile } = useUserProfileStore();
   const showToast = useShowToast();
@@ -49,7 +49,6 @@ const useFollowUser = (userId) => {
             Following: authUser.Following.filter((uid) => uid !== userId),
           })
         );
-        setIsFollowing(false);
       } else {
         // follow
         setAuthUser({
@@ -70,7 +69,6 @@ const useFollowUser = (userId) => {
             Following: [...authUser.Following, userId],
           })
         );
-        setIsFollowing(true);
       }
     } catch (error) {
       showToast("Error", error.message, "error");
@@ -78,13 +76,6 @@ const useFollowUser = (userId) => {
       setIsUpdating(false);
     }
   };
-
-  useEffect(() => {
-    if (authUser) {
-      const isFollowing = authUser.Following.includes(userId);
-      setIsFollowing(isFollowing);
-    }
-  }, [authUser, userId]);
 
   return { isUpdating, isFollowing, handleFollowUser };
 };

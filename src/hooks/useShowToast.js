@@ -1,4 +1,4 @@
-import { toaster } from "../lib/toaster.jsx";
+import { toaster } from "../lib/toaster.js";
 import { useCallback } from "react";
 
 const statusToType = (status) => {

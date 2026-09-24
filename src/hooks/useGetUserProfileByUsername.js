@@ -5,19 +5,18 @@ import { firestore } from "../firebase/firebaseConfig.js";
 import useUserProfileStore from "../store/userProfileStore.js";
 
 const useGetUserProfileByUsername = (username) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadedUsername, setLoadedUsername] = useState(null);
   const showToast = useShowToast();
   const { userProfile, setUserProfile } = useUserProfileStore();
+  const isLoading = !!username && loadedUsername !== username;
 
   useEffect(() => {
     if (!username) {
       setUserProfile(null);
-      setIsLoading(false);
       return;
     }
 
     const getUserProfile = async () => {
-      setIsLoading(true);
       try {
         const q = query(
           collection(firestore, "users"),
@@ -40,7 +39,7 @@ const useGetUserProfileByUsername = (username) => {
         console.error(error);
         showToast("Error", error.message, "error");
       } finally {
-        setIsLoading(false);
+        setLoadedUsername(username);
       }
     };
 

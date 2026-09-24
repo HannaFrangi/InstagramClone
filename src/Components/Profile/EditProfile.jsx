@@ -8,7 +8,7 @@ import {
   Input,
   Stack,
 } from '@chakra-ui/react';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import useAuthStore from '../../store/authStore';
 import usePreviewImg from '../../hooks/usePreviewImage';
 import useEditProfile from '../../hooks/useEditProfile';
@@ -26,27 +26,16 @@ import {
 } from '../AppDialog.jsx';
 
 const EditProfile = ({ isOpen, onClose }) => {
-  const [inputs, setInputs] = useState({
-    fullName: '',
-    username: '',
-    bio: '',
-  });
   const authUser = useAuthStore((state) => state.user);
+  const [inputs, setInputs] = useState({
+    fullName: authUser.fullName || '',
+    username: authUser.username || '',
+    bio: authUser.bio || '',
+  });
   const fileRef = useRef(null);
   const { handleImageChange, selectedFile, setSelectedFile } = usePreviewImg();
   const { isUpdating, editProfile } = useEditProfile();
   const showToast = useShowToast();
-
-  // Initialize inputs with user data when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setInputs({
-        fullName: authUser.fullName || '',
-        username: authUser.username || '',
-        bio: authUser.bio || '',
-      });
-    }
-  }, [isOpen, authUser]);
 
   const checkUsernameAvailability = async (username) => {
     if (!username) return false;

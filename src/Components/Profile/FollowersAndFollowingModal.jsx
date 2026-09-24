@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Tabs,
   Text,
@@ -10,8 +10,7 @@ import {
   Center,
   Spinner,
 } from "@chakra-ui/react";
-import { Link, useParams } from "react-router-dom";
-import useGetUserProfileByUsername from "../../hooks/useGetUserProfileByUsername";
+import { Link } from "react-router-dom";
 import useGetUserProfilesByIds from "../../hooks/useGetUsersProfilesByIds";
 import useFollowUser from "../../hooks/useFollowUser";
 import {
@@ -24,71 +23,31 @@ import {
   AppDialogBody,
 } from "../AppDialog.jsx";
 
-const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
-  const { username } = useParams();
+const NO_IDS = [];
+
+// Mounted only while open, so state starts fresh each time it opens
+const FollowersAndFollowingModal = ({
+  isOpen,
+  onClose,
+  activeTab,
+  userProfile,
+}) => {
   const [tab, setTab] = useState(
     activeTab === "followers" ? "followers" : "following"
   );
-  const [followers, setFollowers] = useState([]);
-  const [following, setFollowing] = useState([]);
-  const [followerIds, setFollowerIds] = useState([]);
-  const [followingIds, setFollowingIds] = useState([]);
-  const [listLoading, setListLoading] = useState(true);
 
-  const { userProfile } = useGetUserProfileByUsername(username);
-
-  useEffect(() => {
-    setTab(activeTab === "followers" ? "followers" : "following");
-  }, [activeTab]);
-
-  useEffect(() => {
-    let timeoutId;
-    if (isOpen) {
-      setListLoading(true);
-      timeoutId = setTimeout(() => {
-        if (userProfile) {
-          setFollowerIds(userProfile.Followers);
-          setFollowingIds(userProfile.Following);
-        }
-      }, 1000);
-    }
-
-    return () => clearTimeout(timeoutId);
-  }, [isOpen, userProfile]);
-
-  const { userProfiles: followersProfiles } =
-    useGetUserProfilesByIds(followerIds);
-  const { userProfiles: followingProfiles } =
-    useGetUserProfilesByIds(followingIds);
-
-  useEffect(() => {
-    if (followersProfiles) {
-      setFollowers(followersProfiles);
-      setListLoading(false);
-    }
-  }, [followersProfiles]);
-
-  useEffect(() => {
-    if (followingProfiles) {
-      setFollowing(followingProfiles);
-      setListLoading(false);
-    }
-  }, [followingProfiles]);
-
-  const handleClose = () => {
-    setFollowers([]);
-    setFollowing([]);
-    setFollowerIds([]);
-    setFollowingIds([]);
-    onClose();
-  };
+  const { userProfiles: followers, isLoading: followersLoading } =
+    useGetUserProfilesByIds(userProfile?.Followers ?? NO_IDS);
+  const { userProfiles: following, isLoading: followingLoading } =
+    useGetUserProfilesByIds(userProfile?.Following ?? NO_IDS);
+  const listLoading = followersLoading || followingLoading;
 
   if (!userProfile) {
     return null;
   }
 
   return (
-    <AppDialogRoot isOpen={isOpen} onClose={handleClose} size='lg'>
+    <AppDialogRoot isOpen={isOpen} onClose={onClose} size='lg'>
       <AppDialogBackdrop />
       <AppDialogPositioner>
         <AppDialogContent bg='black' border='1px solid gray' maxW='500px'>
@@ -128,7 +87,7 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                         <Flex alignItems='center' gap={2}>
                           <Link
                             to={`/${follower.username}`}
-                            onClick={handleClose}>
+                            onClick={onClose}>
                             <Avatar.Root size='md'>
                               <Avatar.Image
                                 src={follower.profilePicURL || undefined}
@@ -139,7 +98,7 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                           <VStack gap={2} alignItems='flex-start'>
                             <Link
                               to={`/${follower.username}`}
-                              onClick={handleClose}>
+                              onClick={onClose}>
                               <Box fontSize={12} fontWeight='bold'>
                                 {follower.fullName}
                               </Box>
@@ -173,7 +132,7 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                         <Flex alignItems='center' gap={2}>
                           <Link
                             to={`/${followingUser.username}`}
-                            onClick={handleClose}>
+                            onClick={onClose}>
                             <Avatar.Root size='md'>
                               <Avatar.Image
                                 src={followingUser.profilePicURL || undefined}
@@ -184,7 +143,7 @@ const FollowersAndFollowingModal = ({ isOpen, onClose, activeTab }) => {
                           <VStack gap={2} alignItems='flex-start'>
                             <Link
                               to={`/${followingUser.username}`}
-                              onClick={handleClose}>
+                              onClick={onClose}>
                               <Box fontSize={12} fontWeight='bold'>
                                 {followingUser.fullName}
                               </Box>

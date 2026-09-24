@@ -1,8 +1,12 @@
 import { Box, Container, Flex, Image, VStack } from "@chakra-ui/react";
+import { useEffect } from "react";
 import AuthForm from "../../Components/AuthForm/AuthForm";
 
 const AuthPage = () => {
-  document.title = "Sign in";
+  useEffect(() => {
+    document.title = "Sign in";
+  }, []);
+
   return (
     <Flex minH={"100vh"} justifyContent={"center"} alignItems={"center"} px={4}>
       <Container maxW={"container.md"} padding={0}>

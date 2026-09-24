@@ -1,10 +1,5 @@
-import { createToaster, Toast, Toaster } from '@chakra-ui/react';
-
-export const toaster = createToaster({
-  placement: 'top',
-  duration: 3000,
-  pauseOnPageIdle: true,
-});
+import { Toast, Toaster } from '@chakra-ui/react';
+import { toaster } from './toaster.js';
 
 export function AppToaster() {
   return (

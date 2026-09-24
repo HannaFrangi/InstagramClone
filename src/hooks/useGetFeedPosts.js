@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { collection, query, onSnapshot } from 'firebase/firestore';
 import usePostStore from '../store/postStore';
 import useAuthStore from '../store/authStore';
@@ -6,22 +6,19 @@ import useShowToast from './useShowToast';
 import { firestore } from '../firebase/firebaseConfig';
 
 const useGetFeedPosts = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [refreshCount, setRefreshCount] = useState(0);
+  const [loadedCount, setLoadedCount] = useState(-1);
   const [error, setError] = useState(null); // Error state
   const { posts, setPosts } = usePostStore();
   const authUser = useAuthStore((state) => state.user);
   const showToast = useShowToast();
+  const hasFollowing = !!authUser?.Following?.length;
+  const isLoading = hasFollowing && loadedCount !== refreshCount;
 
-  const getFeedPosts = useCallback(() => {
-    if (!authUser) {
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
-    setError(null); // Reset error on each fetch attempt
+  useEffect(() => {
+    if (!authUser) return;
 
-    if (!authUser.Following || authUser.Following.length === 0) {
-      setIsLoading(false);
+    if (!hasFollowing) {
       showToast(
         'Warning',
         'You are not following anyone. Follow someone to see posts!',
@@ -41,12 +38,6 @@ const useGetFeedPosts = () => {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        if (snapshot.empty) {
-          setPosts([]);
-          setIsLoading(false);
-          return;
-        }
-
         const feedPosts = [];
 
         snapshot.forEach((doc) => {
@@ -56,30 +47,20 @@ const useGetFeedPosts = () => {
         // Sort posts by creation date
         feedPosts.sort((a, b) => b.createdAt - a.createdAt);
         setPosts(feedPosts);
-        setIsLoading(false);
+        setError(null);
+        setLoadedCount(refreshCount);
       },
       (err) => {
         setError(err.message);
         showToast('Error', err.message, 'error');
-        setIsLoading(false);
+        setLoadedCount(refreshCount);
       }
     );
 
     return unsubscribe;
-  }, [authUser, setPosts, showToast]);
+  }, [authUser, hasFollowing, refreshCount, setPosts, showToast]);
 
-  useEffect(() => {
-    if (!authUser) return;
-
-    const unsubscribe = getFeedPosts();
-
-    return () => unsubscribe && unsubscribe();
-  }, [authUser, getFeedPosts]);
-
-  const refresh = () => {
-    setIsLoading(true);
-    getFeedPosts();
-  };
+  const refresh = () => setRefreshCount((count) => count + 1);
 
   return { isLoading, posts, error, refresh };
 };
