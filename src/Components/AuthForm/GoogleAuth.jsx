@@ -29,7 +29,6 @@ const GoogleAuth = ({ prefix }) => {
       } else {
         const userDoc = {
           uid: newUser.user.uid,
-          email: newUser.user.email,
           username: newUser.user.email.split("@")[0].toLowerCase(),
           fullName: newUser.user.displayName,
           bio: "",

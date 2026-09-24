@@ -4,13 +4,13 @@ import useAuthStore from "../store/authStore";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseConfig";
 import { createNotification, notifyMentions } from "../utils/notifications";
-// import usePostStore from "../store/postStore";
+import usePostStore from "../store/postStore";
 
 const usePostComment = () => {
   const [isCommenting, setIsCommenting] = useState(false);
   const showToast = useShowToast();
   const authUser = useAuthStore((state) => state.user);
-  // const addComment = usePostStore((state) => state.addComment);
+  const addComment = usePostStore((state) => state.addComment);
 
   const handlePostComment = async (post, comment) => {
     const postId = post.id;
@@ -42,7 +42,7 @@ const usePostComment = () => {
       notifyMentions({ text: comment, senderId: authUser.uid, postId }).catch(
         console.error
       );
-      // addComment(postId, newComment);
+      addComment(postId, newComment);
     } catch (error) {
       showToast("Error", error.message, "error");
     } finally {

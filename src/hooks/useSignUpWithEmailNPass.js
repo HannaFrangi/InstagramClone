@@ -88,9 +88,10 @@ const useSignUpWithEmailNPass = () => {
         return;
       }
 
+      // The email stays in Firebase Auth only: profiles are readable by every
+      // signed-in user, so they must not hold private details
       const userDoc = {
         uid: newUser.user.uid,
-        email: inputs.email,
         username: inputs.username.toLowerCase(),
         fullName: inputs.fullName,
         bio: "",

@@ -26,6 +26,7 @@ import usePreviewImg from "../../hooks/usePreviewImage";
 import useShowToast from "../../hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
 import useUserProfileStore from "../../store/userProfileStore";
+import usePostStore from "../../store/postStore";
 import { useLocation } from "react-router-dom";
 import {
   addDoc,
@@ -169,6 +170,7 @@ function useCreatePost() {
   const showToast = useShowToast();
   const [isLoading, setIsLoading] = useState(false);
   const addPost = useUserProfileStore((state) => state.addPost);
+  const addPostToFeed = usePostStore((state) => state.createPost);
   const { userProfile } = useGetUserProfileByUsername(authUser?.username);
 
   // useEffect(() => {
@@ -228,6 +230,9 @@ function useCreatePost() {
         senderId: authUser.uid,
         postId: postDocRef.id,
       }).catch(console.error);
+
+      // The feed isn't live, so put the new post at the top of it
+      if (pathname === "/") addPostToFeed({ ...newPost, id: postDocRef.id });
 
       if (pathname !== "/" && userProfile?.uid === authUser.uid) {
         addPost({ ...newPost, id: postDocRef.id });

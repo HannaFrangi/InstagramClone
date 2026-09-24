@@ -13,6 +13,7 @@ import {
 import { firestore } from "../firebase/firebaseConfig";
 import useAuthStore from "../store/authStore";
 import useUserProfileStore from "../store/userProfileStore";
+import usePostStore from "../store/postStore";
 import useShowToast from "./useShowToast";
 import useDeletePost from "./useDeletePost";
 import { createNotification, notifyMentions } from "../utils/notifications";
@@ -23,6 +24,7 @@ const useRepost = (post) => {
   const [isReposting, setIsReposting] = useState(false);
   const authUser = useAuthStore((state) => state.user);
   const addPostToProfile = useUserProfileStore((state) => state.addPost);
+  const addPostToFeed = usePostStore((state) => state.createPost);
   const { deletePost } = useDeletePost();
   const showToast = useShowToast();
   // Local result of the last toggle, dropped once fresh post data arrives
@@ -53,6 +55,10 @@ const useRepost = (post) => {
     });
     if (useUserProfileStore.getState().userProfile?.uid === authUser.uid) {
       addPostToProfile({ ...newPost, id: postDocRef.id });
+    }
+    // The feed isn't live, so put the new repost/quote at the top of it
+    if (window.location.pathname === "/") {
+      addPostToFeed({ ...newPost, id: postDocRef.id });
     }
     return postDocRef.id;
   };

@@ -37,13 +37,16 @@ service cloud.firestore {
 
       allow create: if isUser(userId)
         && request.resource.data.uid == userId
+        && !('email' in request.resource.data)
         && request.resource.data.Followers == []
         && request.resource.data.Following == []
         && request.resource.data.posts == [];
 
-      // Owner edits their profile, who they follow, and their post list
+      // Owner edits their profile, who they follow, and their post list, and
+      // can remove (never add) the email older profiles were created with
       allow update: if isUser(userId)
-        && changedKeys().hasOnly(['fullName', 'username', 'bio', 'profilePicURL', 'Following', 'posts']);
+        && changedKeys().hasOnly(['fullName', 'username', 'bio', 'profilePicURL', 'Following', 'posts', 'email'])
+        && (!changedKeys().hasAny(['email']) || !('email' in request.resource.data));
 
       // Anyone else can only follow/unfollow (add/remove themselves as a follower)
       allow update: if signedIn() && !isUser(userId)

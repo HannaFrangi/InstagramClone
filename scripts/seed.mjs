@@ -383,9 +383,9 @@ async function main() {
       save();
     }
 
+    // No email: profiles are readable by every signed-in user
     const userDoc = {
       uid,
-      email,
       username,
       fullName,
       bio: pick(BIOS),
